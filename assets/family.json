@@ -1,0 +1,263 @@
+{
+  "id": "root",
+  "name": "Muluk Ailesi",
+  "children": [
+    {
+      "id": "p1",
+      "name": "Mehmet Muluk",
+      "children": [
+        {
+          "id": "p3",
+          "name": "Eşe Taşkın",
+          "children": [
+            {
+              "id": "p5",
+              "name": "İlhan Taşkın",
+              "children": [
+                {
+                  "id": "p7",
+                  "name": "Gökay Taşkın",
+                  "children": []
+                },
+                {
+                  "id": "p8",
+                  "name": "Koray Taşkın",
+                  "children": []
+                }
+              ],
+              "spouses": [
+                {
+                  "id": "p6",
+                  "name": "Canan Taşkın"
+                }
+              ]
+            },
+            {
+              "id": "p9",
+              "name": "Ayhan Taşkın",
+              "children": [
+                {
+                  "id": "p11",
+                  "name": "Çılga Taşkın",
+                  "children": []
+                },
+                {
+                  "id": "p12",
+                  "name": "Mehmet Can Taşkın",
+                  "children": []
+                }
+              ],
+              "spouses": [
+                {
+                  "id": "p10",
+                  "name": "Saliha Taşkın"
+                }
+              ]
+            },
+            {
+              "id": "p13",
+              "name": "Osman Taşkın",
+              "children": [
+                {
+                  "id": "p15",
+                  "name": "Gizem Taşkın Kalay",
+                  "children": [
+                    {
+                      "id": "p17",
+                      "name": "Eklenecek",
+                      "children": []
+                    }
+                  ],
+                  "spouses": [
+                    {
+                      "id": "p16",
+                      "name": "Doğukan Kalay"
+                    }
+                  ]
+                }
+              ],
+              "spouses": [
+                {
+                  "id": "p14",
+                  "name": "Semra Taşkın"
+                }
+              ]
+            },
+            {
+              "id": "p18",
+              "name": "Mehmet Taşkın",
+              "children": [
+                {
+                  "id": "p20",
+                  "name": "Şükrü Ozan Taşkın",
+                  "children": []
+                },
+                {
+                  "id": "p21",
+                  "name": "Eklenecek",
+                  "children": []
+                }
+              ],
+              "spouses": [
+                {
+                  "id": "p19",
+                  "name": "Gülen Taşkın"
+                }
+              ]
+            },
+            {
+              "id": "p22",
+              "name": "Aydın Taşkın",
+              "children": [
+                {
+                  "id": "p24",
+                  "name": "Deniz Taşkın",
+                  "children": []
+                },
+                {
+                  "id": "p25",
+                  "name": "Zeynep Taşkın",
+                  "children": []
+                }
+              ],
+              "spouses": [
+                {
+                  "id": "p23",
+                  "name": "Hicran Çobaner Taşkın"
+                }
+              ]
+            },
+            {
+              "id": "p26",
+              "name": "Fatma Dilek Eker",
+              "children": [
+                {
+                  "id": "p28",
+                  "name": "Yunus Emre Eker",
+                  "children": [
+                    {
+                      "id": "p30",
+                      "name": "Eklenecek",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "p31",
+                  "name": "Berke Eker",
+                  "children": [],
+                  "spouses": [
+                    {
+                      "id": "p32",
+                      "name": "Eklenecek"
+                    }
+                  ]
+                }
+              ],
+              "spouses": [
+                {
+                  "id": "p27",
+                  "name": "Ali Eker"
+                }
+              ]
+            }
+          ],
+          "spouses": [
+            {
+              "id": "p4",
+              "name": "Şükrü Taşkın"
+            }
+          ]
+        },
+        {
+          "id": "p33",
+          "name": "Bekir Sıtkı Muluk",
+          "children": [
+            {
+              "id": "p35",
+              "name": "Haluk Muluk",
+              "children": [
+                {
+                  "id": "p37",
+                  "name": "Eklenecek",
+                  "children": []
+                },
+                {
+                  "id": "p38",
+                  "name": "Eklenecek",
+                  "children": []
+                },
+                {
+                  "id": "p39",
+                  "name": "Eklenecek",
+                  "children": []
+                }
+              ],
+              "spouses": [
+                {
+                  "id": "p36",
+                  "name": "Eklenecek"
+                }
+              ]
+            },
+            {
+              "id": "p40",
+              "name": "Lutfiye Muluk",
+              "children": []
+            },
+            {
+              "id": "p41",
+              "name": "Leyla Muluk",
+              "children": []
+            },
+            {
+              "id": "p42",
+              "name": "Nuri Muluk",
+              "children": [
+                {
+                  "id": "p44",
+                  "name": "Eklenecek",
+                  "children": []
+                },
+                {
+                  "id": "p45",
+                  "name": "Eklenecek",
+                  "children": []
+                }
+              ],
+              "spouses": [
+                {
+                  "id": "p43",
+                  "name": "Eklenecek"
+                }
+              ]
+            }
+          ],
+          "spouses": [
+            {
+              "id": "p34",
+              "name": "Pakize Muluk"
+            }
+          ]
+        }
+      ],
+      "spouses": [
+        {
+          "id": "p2",
+          "name": "Ayşe Muluk"
+        }
+      ]
+    },
+    {
+      "id": "p46",
+      "name": "Mustafa Muluk",
+      "children": [],
+      "spouses": [
+        {
+          "id": "p47",
+          "name": "Eklenecek"
+        }
+      ]
+    }
+  ]
+}

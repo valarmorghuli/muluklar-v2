@@ -1,0 +1,114 @@
+{
+  "id": "root",
+  "name": "Muluk Ailesi",
+  "children": [
+    {
+      "id": "p1",
+      "name": "Mehmet Muluk",
+      "children": [
+        {
+          "id": "p3",
+          "name": "Eşe Taşkın",
+          "children": [
+            {
+              "id": "p5",
+              "name": "İlhan Taşkın",
+              "children": [
+                {
+                  "id": "p7",
+                  "name": "Gökay Taşkın",
+                  "children": []
+                },
+                {
+                  "id": "p8",
+                  "name": "Koray Taşkın",
+                  "children": []
+                }
+              ],
+              "spouses": [
+                {
+                  "id": "p6",
+                  "name": "Canan Taşkın"
+                }
+              ]
+            },
+            {
+              "id": "p9",
+              "name": "Ayhan Taşkın",
+              "children": [
+                {
+                  "id": "p11",
+                  "name": "Çılga Taşkın",
+                  "children": []
+                },
+                {
+                  "id": "p12",
+                  "name": "Mehmet Can Taşkın",
+                  "children": []
+                }
+              ],
+              "spouses": [
+                {
+                  "id": "p10",
+                  "name": "Saliha Taşkın"
+                }
+              ]
+            },
+            {
+              "id": "p13",
+              "name": "Osman Taşkın",
+              "children": [
+                {
+                  "id": "p15",
+                  "name": "Gizem Taşkın Kalay",
+                  "children": [
+                    {
+                      "id": "p17",
+                      "name": "Bebek Kalay",
+                      "children": []
+                    }
+                  ],
+                  "spouses": [
+                    {
+                      "id": "p16",
+                      "name": "Doğukan Kalay"
+                    }
+                  ]
+                }
+              ],
+              "spouses": [
+                {
+                  "id": "p14",
+                  "name": "Semra Taşkın"
+                }
+              ]
+            },
+            {
+              "id": "p18",
+              "name": "Mehmet Taşkın",
+              "children": [],
+              "spouses": [
+                {
+                  "id": "p19",
+                  "name": "Gülen Taşkın"
+                }
+              ]
+            }
+          ],
+          "spouses": [
+            {
+              "id": "p4",
+              "name": "Şükrü Taşkın"
+            }
+          ]
+        }
+      ],
+      "spouses": [
+        {
+          "id": "p2",
+          "name": "Ayşe Muluk"
+        }
+      ]
+    }
+  ]
+}
