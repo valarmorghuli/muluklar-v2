@@ -64,7 +64,7 @@
                   "children": [
                     {
                       "id": "p17",
-                      "name": "Gizem'in Çocuğu",
+                      "name": "Eklenecek",
                       "children": []
                     }
                   ],
@@ -137,14 +137,14 @@
                   "children": [
                     {
                       "id": "p30",
-                      "name": "Emre'nin Çocuğu",
+                      "name": "Eklenecek",
                       "children": []
                     }
                   ],
                   "spouses": [
                     {
                       "id": "p29",
-                      "name": "Emre'nin Eşi"
+                      "name": "Eklenecek"
                     }
                   ]
                 },
@@ -155,7 +155,7 @@
                   "spouses": [
                     {
                       "id": "p32",
-                      "name": "Berke'nin Eşi"
+                      "name": "Eklenecek"
                     }
                   ]
                 }
@@ -185,17 +185,17 @@
               "children": [
                 {
                   "id": "p37",
-                  "name": "Haluk Muluk'un Çocuğu",
+                  "name": "Eklenecek",
                   "children": []
                 },
                 {
                   "id": "p38",
-                  "name": "Haluk Muluk'un Çocuğu",
+                  "name": "Eklenecek",
                   "children": []
                 },
                 {
                   "id": "p39",
-                  "name": "Haluk Muluk'un Çocuğu",
+                  "name": "Eklenecek",
                   "children": []
                 }
               ],
@@ -222,19 +222,19 @@
               "children": [
                 {
                   "id": "p44",
-                  "name": "Nuri Muluk'un Çocuğu",
+                  "name": "Eklenecek",
                   "children": []
                 },
                 {
                   "id": "p45",
-                  "name": "Nuri Muluk'un Çocuğu",
+                  "name": "Eklenecek",
                   "children": []
                 }
               ],
               "spouses": [
                 {
                   "id": "p43",
-                  "name": "Nuri Muluk'un Eşi"
+                  "name": "Eklenecek"
                 }
               ]
             }
@@ -256,14 +256,14 @@
               "children": [
                 {
                   "id": "p50",
-                  "name": "Erhan Muluk'un Çocuğu",
+                  "name": "Eklenecek",
                   "children": []
                 }
               ],
               "spouses": [
                 {
                   "id": "p49",
-                  "name": "Erhan Muluk'un Eşi"
+                  "name": "Eklenecek"
                 }
               ]
             },
@@ -274,14 +274,14 @@
             },
             {
               "id": "p52",
-              "name": "Ahmet Muluk'un Çocuğu",
+              "name": "Eklenecek",
               "children": []
             }
           ],
           "spouses": [
             {
               "id": "p47",
-              "name": "Ahmet Muluk'un Eşi"
+              "name": "Eklenecek"
             }
           ]
         },
@@ -365,14 +365,14 @@
                   "children": [
                     {
                       "id": "p94",
-                      "name": "Gürkan Vural'ın Çocuğu",
+                      "name": "Eklenecek",
                       "children": []
                     }
                   ],
                   "spouses": [
                     {
                       "id": "p93",
-                      "name": "Gürkan Vural'ın Eşi"
+                      "name": "Eklenecek"
                     }
                   ]
                 },
@@ -383,7 +383,7 @@
                   "spouses": [
                     {
                       "id": "p96",
-                      "name": "Sezgin Vural'ın Eşi"
+                      "name": "Eklenecek"
                     }
                   ]
                 }
@@ -435,7 +435,7 @@
               "children": [
                 {
                   "id": "p70",
-                  "name": "Süleyman Tuna Muluk'un Çocuğu",
+                  "name": "Eklenecek",
                   "children": []
                 }
               ],
@@ -479,12 +479,12 @@
                 },
                 {
                   "id": "p78",
-                  "name": "Ahmet Yavuz Muluk'un Çocuğu",
+                  "name": "Eklenecek",
                   "children": []
                 },
                 {
                   "id": "p79",
-                  "name": "Ahmet Yavuz Muluk'un Çocuğu",
+                  "name": "Eklenecek",
                   "children": []
                 }
               ],
