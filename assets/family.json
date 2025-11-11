@@ -64,7 +64,7 @@
                   "children": [
                     {
                       "id": "p17",
-                      "name": "Eklenecek",
+                      "name": "Gizem'in Çocuğu",
                       "children": []
                     }
                   ],
@@ -94,7 +94,7 @@
                 },
                 {
                   "id": "p21",
-                  "name": "Eklenecek",
+                  "name": "Mehmet Taşkın'ın Oğlu",
                   "children": []
                 }
               ],
@@ -137,8 +137,14 @@
                   "children": [
                     {
                       "id": "p30",
-                      "name": "Eklenecek",
+                      "name": "Emre'nin Çocuğu",
                       "children": []
+                    }
+                  ],
+                  "spouses": [
+                    {
+                      "id": "p29",
+                      "name": "Emre'nin Eşi"
                     }
                   ]
                 },
@@ -149,7 +155,7 @@
                   "spouses": [
                     {
                       "id": "p32",
-                      "name": "Eklenecek"
+                      "name": "Berke'nin Eşi"
                     }
                   ]
                 }
@@ -179,24 +185,24 @@
               "children": [
                 {
                   "id": "p37",
-                  "name": "Eklenecek",
+                  "name": "Haluk Muluk'un Çocuğu",
                   "children": []
                 },
                 {
                   "id": "p38",
-                  "name": "Eklenecek",
+                  "name": "Haluk Muluk'un Çocuğu",
                   "children": []
                 },
                 {
                   "id": "p39",
-                  "name": "Eklenecek",
+                  "name": "Haluk Muluk'un Çocuğu",
                   "children": []
                 }
               ],
               "spouses": [
                 {
                   "id": "p36",
-                  "name": "Eklenecek"
+                  "name": "Nevin Muluk"
                 }
               ]
             },
@@ -216,19 +222,19 @@
               "children": [
                 {
                   "id": "p44",
-                  "name": "Eklenecek",
+                  "name": "Nuri Muluk'un Çocuğu",
                   "children": []
                 },
                 {
                   "id": "p45",
-                  "name": "Eklenecek",
+                  "name": "Nuri Muluk'un Çocuğu",
                   "children": []
                 }
               ],
               "spouses": [
                 {
                   "id": "p43",
-                  "name": "Eklenecek"
+                  "name": "Nuri Muluk'un Eşi"
                 }
               ]
             }
@@ -239,23 +245,320 @@
               "name": "Pakize Muluk"
             }
           ]
+        },
+        {
+          "id": "p46",
+          "name": "Ahmet Muluk",
+          "children": [
+            {
+              "id": "p48",
+              "name": "Erhan Muluk",
+              "children": [
+                {
+                  "id": "p50",
+                  "name": "Erhan Muluk'un Çocuğu",
+                  "children": []
+                }
+              ],
+              "spouses": [
+                {
+                  "id": "p49",
+                  "name": "Erhan Muluk'un Eşi"
+                }
+              ]
+            },
+            {
+              "id": "p51",
+              "name": "Filiz Muluk",
+              "children": []
+            },
+            {
+              "id": "p52",
+              "name": "Ahmet Muluk'un Çocuğu",
+              "children": []
+            }
+          ],
+          "spouses": [
+            {
+              "id": "p47",
+              "name": "Ahmet Muluk'un Eşi"
+            }
+          ]
+        },
+        {
+          "id": "p53",
+          "name": "Yusuf Muluk",
+          "children": [
+            {
+              "id": "p6",
+              "name": "Canan Taşkın",
+              "children": [
+                {
+                  "id": "p7",
+                  "name": "Gökay Taşkın",
+                  "children": []
+                },
+                {
+                  "id": "p8",
+                  "name": "Koray Taşkın",
+                  "children": []
+                }
+              ],
+              "spouses": [
+                {
+                  "id": "p5",
+                  "name": "İlhan Taşkın"
+                }
+              ]
+            },
+            {
+              "id": "p55",
+              "name": "Mustafa Muluk",
+              "children": [
+                {
+                  "id": "p57",
+                  "name": "Cansu Muluk",
+                  "children": []
+                }
+              ],
+              "spouses": [
+                {
+                  "id": "p56",
+                  "name": "Zeliha Muluk"
+                }
+              ]
+            },
+            {
+              "id": "p58",
+              "name": "Mehmet Muluk",
+              "children": [
+                {
+                  "id": "p60",
+                  "name": "Seda Muluk",
+                  "children": []
+                },
+                {
+                  "id": "p61",
+                  "name": "Yusuf Muluk",
+                  "children": []
+                },
+                {
+                  "id": "p62",
+                  "name": "Mustafa Muluk",
+                  "children": []
+                }
+              ],
+              "spouses": [
+                {
+                  "id": "p59",
+                  "name": "Ayşe Muluk"
+                }
+              ]
+            },
+            {
+              "id": "p90",
+              "name": "Ayşe Vural",
+              "children": [
+                {
+                  "id": "p92",
+                  "name": "Gürkan Vural",
+                  "children": [
+                    {
+                      "id": "p94",
+                      "name": "Gürkan Vural'ın Çocuğu",
+                      "children": []
+                    }
+                  ],
+                  "spouses": [
+                    {
+                      "id": "p93",
+                      "name": "Gürkan Vural'ın Eşi"
+                    }
+                  ]
+                },
+                {
+                  "id": "p95",
+                  "name": "Sezgin Vural",
+                  "children": [],
+                  "spouses": [
+                    {
+                      "id": "p96",
+                      "name": "Sezgin Vural'ın Eşi"
+                    }
+                  ]
+                }
+              ],
+              "spouses": [
+                {
+                  "id": "p91",
+                  "name": "Bülent Vural"
+                }
+              ]
+            }
+          ],
+          "spouses": [
+            {
+              "id": "p54",
+              "name": "Hanife Muluk"
+            }
+          ]
+        },
+        {
+          "id": "p63",
+          "name": "İsmet Muluk",
+          "children": [
+            {
+              "id": "p65",
+              "name": "Arzu Muluk",
+              "children": [
+                {
+                  "id": "p66",
+                  "name": "Arda Batuhan Öktem",
+                  "children": []
+                },
+                {
+                  "id": "p67",
+                  "name": "Meriç Öktem",
+                  "children": []
+                }
+              ],
+              "spouses": [
+                {
+                  "id": "p89",
+                  "name": "Eski Eşi"
+                }
+              ]
+            },
+            {
+              "id": "p68",
+              "name": "Süleyman Tuna Muluk",
+              "children": [
+                {
+                  "id": "p70",
+                  "name": "Süleyman Tuna Muluk'un Çocuğu",
+                  "children": []
+                }
+              ],
+              "spouses": [
+                {
+                  "id": "p69",
+                  "name": "Bilge Muluk"
+                }
+              ]
+            },
+            {
+              "id": "p71",
+              "name": "Oğuzhan Muluk",
+              "children": [
+                {
+                  "id": "p73",
+                  "name": "Fatma Zehra Muluk",
+                  "children": []
+                },
+                {
+                  "id": "p74",
+                  "name": "Bade Muluk",
+                  "children": []
+                }
+              ],
+              "spouses": [
+                {
+                  "id": "p72",
+                  "name": "Bilge Muluk"
+                }
+              ]
+            },
+            {
+              "id": "p75",
+              "name": "Ahmet Yavuz Muluk",
+              "children": [
+                {
+                  "id": "p77",
+                  "name": "Ufuk Muluk",
+                  "children": []
+                },
+                {
+                  "id": "p78",
+                  "name": "Ahmet Yavuz Muluk'un Çocuğu",
+                  "children": []
+                },
+                {
+                  "id": "p79",
+                  "name": "Ahmet Yavuz Muluk'un Çocuğu",
+                  "children": []
+                }
+              ],
+              "spouses": [
+                {
+                  "id": "p76",
+                  "name": "Demet Muluk"
+                }
+              ]
+            }
+          ],
+          "spouses": [
+            {
+              "id": "p64",
+              "name": "Selma Muluk"
+            }
+          ]
+        },
+        {
+          "id": "p80",
+          "name": "Ali Rıza Muluk",
+          "children": [
+            {
+              "id": "p82",
+              "name": "Barış Muluk",
+              "children": [
+                {
+                  "id": "p84",
+                  "name": "Ege Muluk",
+                  "children": []
+                }
+              ],
+              "spouses": [
+                {
+                  "id": "p83",
+                  "name": "Zeynep Selvi Muluk"
+                }
+              ]
+            },
+            {
+              "id": "p85",
+              "name": "Başar Muluk",
+              "children": [
+                {
+                  "id": "p87",
+                  "name": "Mutlu Muluk",
+                  "children": []
+                },
+                {
+                  "id": "p88",
+                  "name": "Doğa Muluk",
+                  "children": []
+                }
+              ],
+              "spouses": [
+                {
+                  "id": "p86",
+                  "name": "Yasemin Ülgen Muluk"
+                }
+              ]
+            }
+          ],
+          "spouses": [
+            {
+              "id": "p81",
+              "name": "Fatma Zehra Muluk"
+            }
+          ]
         }
       ],
       "spouses": [
         {
           "id": "p2",
           "name": "Ayşe Muluk"
-        }
-      ]
-    },
-    {
-      "id": "p46",
-      "name": "Mustafa Muluk",
-      "children": [],
-      "spouses": [
-        {
-          "id": "p47",
-          "name": "Eklenecek"
         }
       ]
     }
