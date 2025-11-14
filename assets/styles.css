@@ -131,3 +131,35 @@ body {
 }
 
 .node rect.matched { stroke:#4cc9f0 !important; stroke-width:2.6px !important; }
+
+.zoom-fab{
+  position:fixed;
+  right:20px;
+  bottom:80px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  z-index:20;
+}
+
+.zoom-fab button{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  border:1px solid #2c3c52;
+  background:rgba(15,22,33,.75);
+  color:var(--ink);
+  font-size:20px;
+  line-height:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  padding:0;
+}
+
+.zoom-fab button:hover{
+  background:rgba(18,27,39,.95);
+  border-color:#3a4f69;
+}
+

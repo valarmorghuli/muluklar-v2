@@ -54,44 +54,35 @@ function nodeMatchesQuery(d, q) {
   return spouses.some(snm => snm.includes(q));
 }
 
-/* --- Fit to view (kutu boylarını hesaba katar; YALNIZ zoom-out) --- */
-/* opts: { onlyZoomOut=true, padX=120, padY=70 } */
-function fitToView(_pad = 60, ms = 300, opts = {}) {
-  const { onlyZoomOut = true, padX = 120, padY = 70 } = opts;
+// --- Fit to view (considers node sizes; ONLY zoom-out, never enlarges) ---
+function fitToView(pad = 60, ms = 300, { onlyZoomOut = true } = {}) {
+  const nodes = [];
+  root.each(n => nodes.push(n));
+  if (!nodes.length) return;
 
-  const nodesSel = d3.selectAll("g.node");
-  if (nodesSel.empty()) return;
-
+  const halfH = NODE_H / 2, halfW = NODE_W / 2;
   let minX = +Infinity, maxX = -Infinity, minY = +Infinity, maxY = -Infinity;
-
-  nodesSel.each(function (d) {
-    const r = d3.select(this).select("rect");
-    const w = +r.attr("width") || NODE_W;
-    const h = +r.attr("height") || NODE_H;
-    const halfW = w / 2, halfH = h / 2;
-
-    if (d.x != null) { minX = Math.min(minX, d.x - halfH); maxX = Math.max(maxX, d.x + halfH); }
-    if (d.y != null) { minY = Math.min(minY, d.y - halfW); maxY = Math.max(maxY, d.y + halfW); }
+  nodes.forEach(n => {
+    if (n.x != null) { minX = Math.min(minX, n.x - halfH); maxX = Math.max(maxX, n.x + halfH); }
+    if (n.y != null) { minY = Math.min(minY, n.y - halfW); maxY = Math.max(maxY, n.y + halfW); }
   });
 
   const w = WIDTH() || window.innerWidth;
   const h = HEIGHT() || Math.round(window.innerHeight * 0.8);
 
-  const boxW = Math.max(1, (maxY - minY) + padX * 2);
-  const boxH = Math.max(1, (maxX - minX) + padY * 2);
+  const boxW = Math.max(1, (maxY - minY) + pad * 2);
+  const boxH = Math.max(1, (maxX - minX) + pad * 2);
 
   let kCandidate = Math.min(w / boxW, h / boxH);
   const currentK = d3.zoomTransform(svg.node()).k || 1;
-  kCandidate = onlyZoomOut ? Math.min(currentK, 1, kCandidate) : Math.min(1, kCandidate);
+  if (onlyZoomOut) kCandidate = Math.min(currentK, 1, kCandidate);
+  else kCandidate = Math.min(1, kCandidate);
 
   const k = Math.max(0.35, Math.min(2.5, kCandidate));
   const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
 
-  const tx = w / 2 - cy * k;
-  const ty = h / 2 - cx * k;
-
-  svg.transition().duration(ms)
-    .call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(k));
+  const tx = w / 2 - cy * k, ty = h / 2 - cx * k;
+  svg.transition().duration(ms).call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(k));
 }
 
 /* ---------------- Search state ---------------- */
@@ -110,6 +101,7 @@ function collectMatches(q) {
   hits.sort((a, b) => (a.y - b.y) || (a.x - b.x) || String(a.id).localeCompare(String(b.id)));
   return hits.map(h => h.id);
 }
+
 function focusAt(index) {
   if (!searchHits.length) return;
   if (index < 0) index = searchHits.length - 1;
@@ -154,6 +146,7 @@ function initTree(data) {
 function collapseDeep(n) { if (n.children) { n._children = n.children; n._children.forEach(collapseDeep); n.children = null; } }
 function expandAll(n) { if (n._children) { n.children = n._children; n._children = null; } (n.children || []).forEach(expandAll); }
 function collapseAll(n) { (n.children || []).forEach(collapseAll); if (n.children) { n._children = n.children; n.children = null; } }
+
 function elbow(s, t) { const mx = (s.y + t.y) / 2; return `M${s.y},${s.x}C${mx},${s.x} ${mx},${t.x} ${t.y},${t.x}`; }
 
 function update(source) {
@@ -206,9 +199,14 @@ function toggle(d) {
 
 /* ---------------- UI wiring ---------------- */
 function attachUI() {
-  const s = $$("#search"), r = $$("#resetFilter"), e = $$("#expandAll"), c = $$("#collapseAll");
-  const h = document.getElementById('homeBtn'); // Merkezle
+  const s = $$("#search"),
+    r = $$("#resetFilter"),
+    e = $$("#expandAll"),
+    c = $$("#collapseAll");
 
+  const h = document.getElementById('homeBtn');    // Merkezle
+  const zi = document.getElementById('zoomInFab');  // sağdaki +
+  const zo = document.getElementById('zoomOutFab'); // sağdaki −
   // yazarken canlı highlight — sadece ilk eşleşmenin yolu açılır
   s.addEventListener("input", () => {
     const q = s.value.trim().toLowerCase();
@@ -247,24 +245,55 @@ function attachUI() {
     else focusAt(searchIndex + 1);
   });
 
-  // Sıfırla
+  // Sıfırla: sadece arama durumunu temizle, ağaca hiç dokunma
   r.addEventListener("click", () => {
-    s.value = ''; searchHits = []; searchIndex = -1;
-    (root.children || []).forEach(collapseDeep);
-    update(root);
-    d3.selectAll('g.node rect').classed('focused', false).classed('matched', false)
-      .style('stroke-width', 1.25).style('stroke', 'var(--nodeStroke)');
-    fitToView(60, 300, { onlyZoomOut: true, padX: 120, padY: 70 });
+    s.value = '';
+    searchHits = [];
+    searchIndex = -1;
+
+    d3.selectAll('g.node rect')
+      .classed('focused', false)
+      .classed('matched', false)
+      .style('stroke-width', 1.25)
+      .style('stroke', 'var(--nodeStroke)');
   });
 
-  // Tümünü Aç/Kapat
-  e.addEventListener("click", () => { expandAll(root); update(root); fitToView(60, 300, { onlyZoomOut: true, padX: 120, padY: 70 }); });
-  c.addEventListener("click", () => { (root.children || []).forEach(collapseAll); update(root); fitToView(60, 300, { onlyZoomOut: true, padX: 120, padY: 70 }); });
+  // Tümünü Aç
+  e.addEventListener("click", () => {
+    expandAll(root);
+    update(root);
+    // tüm ağacı, önceki zoom ne olursa olsun ekrana sığdır
+    fitToView(60, 300, { onlyZoomOut: false, padX: 120, padY: 70 });
+  });
+
+  // Tümünü Kapat
+  c.addEventListener("click", () => {
+    (root.children || []).forEach(collapseAll);
+    update(root);
+    fitToView(60, 300, { onlyZoomOut: false, padX: 120, padY: 70 });
+  });
+
+  // Yakınlaştır (+) – sağdaki daire
+  if (zi) {
+    zi.addEventListener('click', () => {
+      if (!svg) return;
+      svg.transition().duration(200).call(zoom.scaleBy, 1.2); // %20 zoom-in
+    });
+  }
+
+  // Uzaklaştır (−) – sağdaki daire
+  if (zo) {
+    zo.addEventListener('click', () => {
+      if (!svg) return;
+      svg.transition().duration(200).call(zoom.scaleBy, 0.8); // %20 zoom-out
+    });
+  }
 
   // Merkezle
   if (h) {
     h.addEventListener('click', () => {
-      fitToView(60, 300, { onlyZoomOut: true, padX: 120, padY: 70 });
+      // o anda açık olan yapıya göre ideal kadraj
+      fitToView(60, 300, { onlyZoomOut: false, padX: 120, padY: 70 });
     });
   }
 }

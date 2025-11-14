@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Muluk Ailesi Soy Ağacı</title>
+    <title>Muluk Ailesi</title>
     <link rel="stylesheet" href="assets/styles.css" />
     <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
@@ -13,8 +13,9 @@
     <header class="topbar">
         <div class="brand">Muluk Ailesi Soy Ağacı</div>
         <div class="controls"><input id="search" type="search" placeholder="İsim + Enter" />
-            <button id="resetFilter">Sıfırla</button><button id="expandAll">Tümünü Aç</button><button
-                id="collapseAll">Tümünü Kapat</button>
+            <button id="resetFilter">Sıfırla</button>
+            <button id="expandAll">Tümünü Aç</button>
+            <button id="collapseAll">Tümünü Kapat</button>
             <button id="homeBtn">Merkezle</button>
         </div>
     </header>
@@ -22,6 +23,10 @@
         <div id="tree"></div>
     </main>
     <script src="assets/script.js"></script>
+    <div class="zoom-fab">
+        <button id="zoomInFab">+</button>
+        <button id="zoomOutFab">−</button>
+    </div>
 </body>
 
 </html>
