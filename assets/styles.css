@@ -10,22 +10,25 @@
 }
 
 * {
-  box-sizing: border-box
+  box-sizing: border-box;
 }
 
 html,
 body {
-  height: 100%
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font: 14px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Arial
+  font: 14px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Arial;
 }
 
-.topbar {
+/* ===== Üst bar ===== */
+header.topbar {
   position: sticky;
   top: 0;
   z-index: 10;
@@ -35,17 +38,17 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px
+  gap: 12px;
 }
 
 .brand {
-  font-weight: 700
+  font-weight: 700;
 }
 
 .controls {
   display: flex;
   gap: 8px;
-  align-items: center
+  align-items: center;
 }
 
 .controls input,
@@ -54,32 +57,31 @@ body {
   border: 1px solid var(--line);
   background: #0b0d12;
   color: var(--ink);
-  border-radius: 8px
+  border-radius: 8px;
 }
 
 .controls button {
-  cursor: pointer
+  cursor: pointer;
 }
 
 .controls button:hover {
-  border-color: var(--accent)
+  border-color: var(--accent);
 }
 
-.onlytree {
-  height: calc(100vh - 56px - 28px)
+/* ===== Ağaç alanı (yüksekliği JS ayarlayacak) ===== */
+main.onlytree {
+  position: relative;
+  /* yükseklik JS tarafında set edilecek */
 }
 
 #tree {
   width: 100%;
-  height: 100%
+  height: 100%;
+  position: relative;
+  overflow: hidden;
 }
 
-.foot {
-  background: var(--panel);
-  border-top: 1px solid var(--line);
-  color: var(--muted);
-  padding: 6px 16px
-}
+/* ===== Node / link stilleri ===== */
 
 .node rect {
   fill: var(--node);
@@ -87,23 +89,23 @@ body {
   stroke-width: 1.25px;
   rx: 10;
   ry: 10;
-  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, .35))
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.35));
 }
 
 .node .title {
   fill: var(--ink);
-  font-weight: 600
+  font-weight: 600;
 }
 
 .node .meta {
   fill: var(--muted);
-  font-size: 12px
+  font-size: 12px;
 }
 
 .link {
   fill: none;
   stroke: #2b3244;
-  stroke-width: 1.6px
+  stroke-width: 1.6px;
 }
 
 .spouse-badge {
@@ -111,12 +113,12 @@ body {
   stroke: var(--accent);
   stroke-width: 1;
   rx: 6;
-  ry: 6
+  ry: 6;
 }
 
 .spouse-text {
   fill: var(--accent);
-  font-size: 14px
+  font-size: 14px;
 }
 
 .tooltip {
@@ -127,39 +129,90 @@ body {
   border-radius: 8px;
   color: var(--ink);
   font-size: 13px;
-  pointer-events: none
+  pointer-events: none;
 }
 
-.node rect.matched { stroke:#4cc9f0 !important; stroke-width:2.6px !important; }
-
-.zoom-fab{
-  position:fixed;
-  right:20px;
-  bottom:80px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  z-index:20;
+.node rect.matched {
+  stroke: #4cc9f0 !important;
+  stroke-width: 2.6px !important;
 }
 
-.zoom-fab button{
-  width:42px;
-  height:42px;
-  border-radius:50%;
-  border:1px solid #2c3c52;
-  background:rgba(15,22,33,.75);
-  color:var(--ink);
-  font-size:20px;
-  line-height:1;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  padding:0;
+/* ===== Sağ alttaki zoom butonları ===== */
+.zoom-fab {
+  position: fixed;
+  right: 20px;
+  bottom: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 20;
 }
 
-.zoom-fab button:hover{
-  background:rgba(18,27,39,.95);
-  border-color:#3a4f69;
+.zoom-fab button {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid #2c3c52;
+  background: rgba(15, 22, 33, 0.75);
+  color: var(--ink);
+  font-size: 20px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
 }
 
+.zoom-fab button:hover {
+  background: rgba(18, 27, 39, 0.95);
+  border-color: #3a4f69;
+}
+
+/* ===== Mobil iyileştirmeler (yükseklik JS’te, burada sadece layout) ===== */
+@media (max-width: 768px) {
+  header.topbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 8px 12px;
+  }
+
+  .controls {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .controls input {
+    flex: 1 1 100%;
+    min-width: 0;
+    max-width: 100%;
+    font-size: 13px;
+    padding: 7px 10px;
+  }
+
+  .controls button {
+    font-size: 12px;
+    padding: 7px 8px;
+  }
+
+  .zoom-fab {
+    right: 12px;
+    bottom: 80px;
+    gap: 8px;
+  }
+
+  .zoom-fab button {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+
+  .node text.title {
+    font-size: 13px;
+  }
+
+  .node text.spouse-text {
+    font-size: 13px;
+  }
+}

@@ -3,6 +3,23 @@ const $$ = (s, c = document) => c.querySelector(s);
 const WIDTH = () => $$("#tree").clientWidth;
 const HEIGHT = () => $$("#tree").clientHeight;
 
+// Header yüksekliğine göre ağaç alanını ayarla
+function resizeTreeContainer() {
+  const header = document.querySelector('header.topbar');
+  const main = document.querySelector('main.onlytree');
+  if (!header || !main) return;
+
+  const headerH = header.getBoundingClientRect().height;
+  const vh = window.innerHeight;
+
+  // En az 380px olsun ki çok küçük kalmasın
+  const h = Math.max(vh - headerH, 380);
+
+  main.style.height = h + "px";
+}
+window.addEventListener("resize", resizeTreeContainer);
+window.addEventListener("orientationchange", resizeTreeContainer);
+
 const NODE_W = 210, NODE_H = 76;
 
 let tooltip, svg, g, root, treeLayout, zoom;
@@ -214,10 +231,16 @@ function attachUI() {
     searchIndex = -1;
 
     if (!q) {
-      (root.children || []).forEach(collapseDeep);
-      update(root);
-      d3.selectAll("g.node rect").classed("matched", false).style("stroke-width", 1.25).style("stroke", "var(--nodeStroke)");
-      fitToView(60, 250, { onlyZoomOut: true, padX: 120, padY: 70 });
+      // Arama tamamen boşsa: sadece vurguyu temizle, ağaca dokunma
+      searchHits = [];
+      searchIndex = -1;
+
+      d3.selectAll("g.node rect")
+        .classed("focused", false)
+        .classed("matched", false)
+        .style("stroke-width", 1.25)
+        .style("stroke", "var(--nodeStroke)");
+
       return;
     }
 
@@ -299,7 +322,14 @@ function attachUI() {
 }
 
 /* ---------------- Boot ---------------- */
-async function main() { const data = await fetch('assets/family.json').then(r => r.json()); initTree(data); attachUI(); }
+async function main() {
+  // önce container yüksekliğini ayarla
+  resizeTreeContainer();
+
+  const data = await fetch('assets/family.json').then(r => r.json());
+  initTree(data);
+  attachUI();
+}
 main();
 
 // resize: SVG boyutlarını güncelle
