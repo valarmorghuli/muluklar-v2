@@ -20,7 +20,8 @@ function resizeTreeContainer() {
 window.addEventListener("resize", resizeTreeContainer);
 window.addEventListener("orientationchange", resizeTreeContainer);
 
-const NODE_W = 210, NODE_H = 76;
+const NODE_W = 180;
+const NODE_H = 54;
 
 let tooltip, svg, g, root, treeLayout, zoom;
 
@@ -167,43 +168,99 @@ function collapseAll(n) { (n.children || []).forEach(collapseAll); if (n.childre
 function elbow(s, t) { const mx = (s.y + t.y) / 2; return `M${s.y},${s.x}C${mx},${s.x} ${mx},${t.x} ${t.y},${t.x}`; }
 
 function update(source) {
-  const dur = 300, treed = treeLayout(root);
+  const dur = 300;
+  const treed = treeLayout(root);
 
-  const links = g.selectAll("path.link").data(treed.links(), d => d.target.data.id || d.target.data.name);
-  links.enter().append("path").attr("class", "link").attr("d", d => elbow(source, source))
-    .merge(links).transition().duration(dur).attr("d", d => elbow(d.source, d.target));
-  links.exit().transition().duration(dur).attr("d", d => elbow(source, source)).remove();
+  // ---- LINKLER ----
+  const links = g.selectAll("path.link")
+    .data(treed.links(), d => d.target.data.id || d.target.data.name);
 
-  const nodes = g.selectAll("g.node").data(treed.descendants(), d => d.data.id || d.data.name);
-  const en = nodes.enter().append("g").attr("class", "node")
+  links.enter()
+    .append("path")
+    .attr("class", "link")
+    .attr("d", d => elbow(source, source))
+    .merge(links)
+    .transition().duration(dur)
+    .attr("d", d => elbow(d.source, d.target));
+
+  links.exit()
+    .transition().duration(dur)
+    .attr("d", d => elbow(source, source))
+    .remove();
+
+  // ---- NODLAR ----
+  const nodes = g.selectAll("g.node")
+    .data(treed.descendants(), d => d.data.id || d.data.name);
+
+  const en = nodes.enter()
+    .append("g")
+    .attr("class", "node")
     .attr("transform", d => `translate(${source.y0 || 0},${source.x0 || 0})`)
     .on("click", (ev, d) => { hideTip(); toggle(d); })
-    .on("mouseenter", (ev, d) => { showTip(`<strong>${d.data.name}</strong>`, ev.pageX, ev.pageY); })
+    .on("mouseenter", (ev, d) => {
+      showTip(`<strong>${d.data.name}</strong>`, ev.pageX, ev.pageY);
+    })
     .on("mouseleave", hideTip);
 
-  en.append("text").attr("class", "title").attr("x", -NODE_W / 2 + 12).attr("y", -6).text(d => d.data.name);
-  en.append("text").attr("class", "spouse-text").attr("x", -NODE_W / 2 + 12).attr("y", 14)
-    .text(d => (d.data.spouses && d.data.spouses.length) ? (d.data.spouses.map(s => s.name).join(', ')) : '');
+  // Kutunun kendisi (sabit yükseklik)
+  en.append("rect")
+    .attr("x", -NODE_W / 2)
+    .attr("y", -NODE_H / 2)
+    .attr("width", NODE_W)
+    .attr("height", NODE_H)
+    .attr("rx", 10);
 
-  // otomatik kutu yüksekliği
-  en.each(function (d) {
+  // İsim satırı – ilk yerleşim
+  en.append("text")
+    .attr("class", "title")
+    .attr("x", -NODE_W / 2 + 12)
+    .attr("y", -6) // kabaca üst satır
+    .text(d => d.data.name);
+
+  // Eş(ler) satırı – ilk yerleşim
+  en.append("text")
+    .attr("class", "spouse-text")
+    .attr("x", -NODE_W / 2 + 12)
+    .attr("y", 14) // ikinci satır
+    .text(d => {
+      const sps = d.data.spouses;
+      if (!sps || !sps.length) return "";
+      return sps.map(s => s.name).join(", ");
+    });
+
+  // ---- METNİ BLOK OLARAK DİKEY ORTALA ----
+  en.each(function () {
     const gnode = d3.select(this);
-    const nb = gnode.select("text.title").node().getBBox();
-    const sbNode = gnode.select("text.spouse-text").node();
-    const sb = sbNode ? sbNode.getBBox() : { height: 0 };
-    const lines = (d.data.spouses && d.data.spouses.length) ? (nb.height + 6 + sb.height) : nb.height;
-    const boxH = Math.max(40, 20 + lines);
-    gnode.insert("rect", "text.title")
-      .attr("x", -NODE_W / 2).attr("y", -boxH / 2).attr("width", NODE_W).attr("height", boxH).attr("rx", 10);
-    gnode.select("text.title").attr("y", -boxH / 2 + 16);
-    if (d.data.spouses && d.data.spouses.length)
-      gnode.select("text.spouse-text").attr("y", -boxH / 2 + 16 + nb.height + 6);
-    else
-      gnode.select("text.spouse-text").text("");
+    const texts = gnode.selectAll("text");
+    if (texts.empty()) return;
+
+    // Metin bloğunun ortak bbox'ı
+    let minY = Infinity, maxY = -Infinity;
+    texts.each(function () {
+      const b = this.getBBox();
+      if (b.y < minY) minY = b.y;
+      if (b.y + b.height > maxY) maxY = b.y + b.height;
+    });
+
+    const center = (minY + maxY) / 2; // metin bloğunun merkezi
+    const delta = -center;            // merkezi 0'a taşımak için kaydırma
+
+    // Tüm text satırlarının y değerine aynı delta'yı ekle
+    texts.attr("y", function () {
+      const oldY = parseFloat(d3.select(this).attr("y")) || 0;
+      return oldY + delta;
+    });
   });
 
-  en.merge(nodes).transition().duration(dur).attr("transform", d => `translate(${d.y},${d.x})`);
-  nodes.exit().transition().duration(dur).attr("transform", d => `translate(${source.y},${source.x})`).remove();
+  // ---- TRANSİSYON ----
+  en.merge(nodes)
+    .transition().duration(dur)
+    .attr("transform", d => `translate(${d.y},${d.x})`);
+
+  nodes.exit()
+    .transition().duration(dur)
+    .attr("transform", d => `translate(${source.y},${source.x})`)
+    .remove();
 
   treed.each(d => { d.x0 = d.x; d.y0 = d.y; });
 }
@@ -219,19 +276,22 @@ function attachUI() {
   const s = $$("#search"),
     r = $$("#resetFilter"),
     e = $$("#expandAll"),
-    c = $$("#collapseAll");
+    c = $$("#collapseAll"),
+    pB = $$("#prevHit"),
+    nB = $$("#nextHit");
 
-  const h = document.getElementById('homeBtn');    // Merkezle
-  const zi = document.getElementById('zoomInFab');  // sağdaki +
-  const zo = document.getElementById('zoomOutFab'); // sağdaki −
-  // yazarken canlı highlight — sadece ilk eşleşmenin yolu açılır
+  const h = document.getElementById('homeBtn');     // Merkezle
+  const zi = document.getElementById('zoomInFab');   // sağdaki +
+  const zo = document.getElementById('zoomOutFab');  // sağdaki −
+
+  // --- Yazarken canlı highlight ---
   s.addEventListener("input", () => {
     const q = s.value.trim().toLowerCase();
     searchHits = collectMatches(q);
     searchIndex = -1;
 
     if (!q) {
-      // Arama tamamen boşsa: sadece vurguyu temizle, ağaca dokunma
+      // Arama boşsa: sadece vurguyu temizle, ağaca / zoom'a dokunma
       searchHits = [];
       searchIndex = -1;
 
@@ -244,11 +304,16 @@ function attachUI() {
       return;
     }
 
+    // İlk eşleşmenin yolunu aç
     if (searchHits.length) {
       const first = findById(searchHits[0]);
-      if (first) { expandPathTo(first); update(first); }
+      if (first) {
+        expandPathTo(first);
+        update(first);
+      }
     }
 
+    // Ekrandaki node’lar üzerinde highlight uygula
     requestAnimationFrame(() => {
       d3.selectAll("g.node").each(function (nd) {
         const isHit = nodeMatchesQuery(nd, q);
@@ -260,15 +325,26 @@ function attachUI() {
     });
   });
 
-  // Enter/Shift+Enter ile gezin
+  // --- Enter ile odaklanma ---
   s.addEventListener("keydown", (ev) => {
     if (ev.key !== "Enter") return;
     if (!searchHits.length) return;
+
+    ev.preventDefault();
+
+    // Mobil: klavyeyi kapat, ilk eşleşmeye odaklan
+    if (window.innerWidth <= 768) {
+      s.blur();          // sanal klavye kapanır
+      focusAt(0);        // ilk hit'e git
+      return;            // diğerlerine ⬆︎ / ⬇︎ ile gideceksin
+    }
+
+    // Desktop: Enter → sonraki, Shift+Enter → önceki
     if (ev.shiftKey) focusAt(searchIndex - 1);
     else focusAt(searchIndex + 1);
   });
 
-  // Sıfırla: sadece arama durumunu temizle, ağaca hiç dokunma
+  // --- Sıfırla: sadece arama durumunu temizle ---
   r.addEventListener("click", () => {
     s.value = '';
     searchHits = [];
@@ -281,22 +357,22 @@ function attachUI() {
       .style('stroke', 'var(--nodeStroke)');
   });
 
-  // Tümünü Aç
+  // --- Tümünü Aç ---
   e.addEventListener("click", () => {
     expandAll(root);
     update(root);
-    // tüm ağacı, önceki zoom ne olursa olsun ekrana sığdır
+    // tüm ağacı ekrana sığdır
     fitToView(60, 300, { onlyZoomOut: false, padX: 120, padY: 70 });
   });
 
-  // Tümünü Kapat
+  // --- Tümünü Kapat ---
   c.addEventListener("click", () => {
     (root.children || []).forEach(collapseAll);
     update(root);
     fitToView(60, 300, { onlyZoomOut: false, padX: 120, padY: 70 });
   });
 
-  // Yakınlaştır (+) – sağdaki daire
+  // --- Yakınlaştır (+) – sağdaki daire ---
   if (zi) {
     zi.addEventListener('click', () => {
       if (!svg) return;
@@ -304,7 +380,7 @@ function attachUI() {
     });
   }
 
-  // Uzaklaştır (−) – sağdaki daire
+  // --- Uzaklaştır (−) – sağdaki daire ---
   if (zo) {
     zo.addEventListener('click', () => {
       if (!svg) return;
@@ -312,14 +388,29 @@ function attachUI() {
     });
   }
 
-  // Merkezle
+  // --- Merkezle ---
   if (h) {
     h.addEventListener('click', () => {
-      // o anda açık olan yapıya göre ideal kadraj
       fitToView(60, 300, { onlyZoomOut: false, padX: 120, padY: 70 });
     });
   }
+
+  // --- Önceki / Sonraki eşleşme butonları ---
+  if (nB) {
+    nB.addEventListener("click", () => {
+      if (!searchHits.length) return;
+      focusAt(searchIndex + 1);
+    });
+  }
+
+  if (pB) {
+    pB.addEventListener("click", () => {
+      if (!searchHits.length) return;
+      focusAt(searchIndex - 1);
+    });
+  }
 }
+
 
 /* ---------------- Boot ---------------- */
 async function main() {
