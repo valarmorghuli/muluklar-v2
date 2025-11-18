@@ -17,12 +17,16 @@
                 {
                   "id": "p7",
                   "name": "Gökay Taşkın",
-                  "children": []
+                  "children": [],
+                  "parentSpouseId": "p6",
+                  "parentSpouseName": "Canan Taşkın"
                 },
                 {
                   "id": "p8",
                   "name": "Koray Taşkın",
-                  "children": []
+                  "children": [],
+                  "parentSpouseId": "p6",
+                  "parentSpouseName": "Canan Taşkın"
                 }
               ],
               "spouses": [
@@ -30,7 +34,9 @@
                   "id": "p6",
                   "name": "Canan Taşkın"
                 }
-              ]
+              ],
+              "parentSpouseId": "p4",
+              "parentSpouseName": "Şükrü Taşkın"
             },
             {
               "id": "p9",
@@ -39,12 +45,16 @@
                 {
                   "id": "p11",
                   "name": "Çılga Taşkın",
-                  "children": []
+                  "children": [],
+                  "parentSpouseId": "p10",
+                  "parentSpouseName": "Saliha Taşkın"
                 },
                 {
                   "id": "p12",
                   "name": "Mehmet Can Taşkın",
-                  "children": []
+                  "children": [],
+                  "parentSpouseId": "p10",
+                  "parentSpouseName": "Saliha Taşkın"
                 }
               ],
               "spouses": [
@@ -52,7 +62,9 @@
                   "id": "p10",
                   "name": "Saliha Taşkın"
                 }
-              ]
+              ],
+              "parentSpouseId": "p4",
+              "parentSpouseName": "Şükrü Taşkın"
             },
             {
               "id": "p13",
@@ -65,7 +77,9 @@
                     {
                       "id": "p17",
                       "name": "Eklenecek",
-                      "children": []
+                      "children": [],
+                      "parentSpouseId": "p16",
+                      "parentSpouseName": "Doğukan Kalay"
                     }
                   ],
                   "spouses": [
@@ -73,7 +87,9 @@
                       "id": "p16",
                       "name": "Doğukan Kalay"
                     }
-                  ]
+                  ],
+                  "parentSpouseId": "p14",
+                  "parentSpouseName": "Semra Taşkın"
                 }
               ],
               "spouses": [
@@ -81,7 +97,9 @@
                   "id": "p14",
                   "name": "Semra Taşkın"
                 }
-              ]
+              ],
+              "parentSpouseId": "p4",
+              "parentSpouseName": "Şükrü Taşkın"
             },
             {
               "id": "p18",
@@ -90,12 +108,16 @@
                 {
                   "id": "p20",
                   "name": "Şükrü Ozan Taşkın",
-                  "children": []
+                  "children": [],
+                  "parentSpouseId": "p19",
+                  "parentSpouseName": "Gülen Taşkın"
                 },
                 {
                   "id": "p21",
-                  "name": "Mehmet Taşkın'ın Oğlu",
-                  "children": []
+                  "name": "Eklenecek",
+                  "children": [],
+                  "parentSpouseId": "p19",
+                  "parentSpouseName": "Gülen Taşkın"
                 }
               ],
               "spouses": [
@@ -103,7 +125,9 @@
                   "id": "p19",
                   "name": "Gülen Taşkın"
                 }
-              ]
+              ],
+              "parentSpouseId": "p4",
+              "parentSpouseName": "Şükrü Taşkın"
             },
             {
               "id": "p22",
@@ -112,12 +136,16 @@
                 {
                   "id": "p24",
                   "name": "Deniz Taşkın",
-                  "children": []
+                  "children": [],
+                  "parentSpouseId": "p23",
+                  "parentSpouseName": "Hicran Çobaner Taşkın"
                 },
                 {
                   "id": "p25",
                   "name": "Zeynep Taşkın",
-                  "children": []
+                  "children": [],
+                  "parentSpouseId": "p23",
+                  "parentSpouseName": "Hicran Çobaner Taşkın"
                 }
               ],
               "spouses": [
@@ -125,7 +153,9 @@
                   "id": "p23",
                   "name": "Hicran Çobaner Taşkın"
                 }
-              ]
+              ],
+              "parentSpouseId": "p4",
+              "parentSpouseName": "Şükrü Taşkın"
             },
             {
               "id": "p26",
@@ -138,7 +168,9 @@
                     {
                       "id": "p30",
                       "name": "Eklenecek",
-                      "children": []
+                      "children": [],
+                      "parentSpouseId": "p29",
+                      "parentSpouseName": "Eklenecek"
                     }
                   ],
                   "spouses": [
@@ -146,7 +178,9 @@
                       "id": "p29",
                       "name": "Eklenecek"
                     }
-                  ]
+                  ],
+                  "parentSpouseId": "p27",
+                  "parentSpouseName": "Ali Eker"
                 },
                 {
                   "id": "p31",
@@ -157,7 +191,9 @@
                       "id": "p32",
                       "name": "Eklenecek"
                     }
-                  ]
+                  ],
+                  "parentSpouseId": "p27",
+                  "parentSpouseName": "Ali Eker"
                 }
               ],
               "spouses": [
@@ -165,7 +201,9 @@
                   "id": "p27",
                   "name": "Ali Eker"
                 }
-              ]
+              ],
+              "parentSpouseId": "p4",
+              "parentSpouseName": "Şükrü Taşkın"
             }
           ],
           "spouses": [
@@ -173,7 +211,9 @@
               "id": "p4",
               "name": "Şükrü Taşkın"
             }
-          ]
+          ],
+          "parentSpouseId": "p2",
+          "parentSpouseName": "Ayşe Muluk"
         },
         {
           "id": "p33",
@@ -186,17 +226,23 @@
                 {
                   "id": "p37",
                   "name": "Eklenecek",
-                  "children": []
+                  "children": [],
+                  "parentSpouseId": "p36",
+                  "parentSpouseName": "Nevin Muluk"
                 },
                 {
                   "id": "p38",
                   "name": "Eklenecek",
-                  "children": []
+                  "children": [],
+                  "parentSpouseId": "p36",
+                  "parentSpouseName": "Nevin Muluk"
                 },
                 {
                   "id": "p39",
                   "name": "Eklenecek",
-                  "children": []
+                  "children": [],
+                  "parentSpouseId": "p36",
+                  "parentSpouseName": "Nevin Muluk"
                 }
               ],
               "spouses": [
@@ -204,17 +250,23 @@
                   "id": "p36",
                   "name": "Nevin Muluk"
                 }
-              ]
+              ],
+              "parentSpouseId": "p34",
+              "parentSpouseName": "Pakize Muluk"
             },
             {
               "id": "p40",
               "name": "Lutfiye Muluk",
-              "children": []
+              "children": [],
+              "parentSpouseId": "p34",
+              "parentSpouseName": "Pakize Muluk"
             },
             {
               "id": "p41",
               "name": "Leyla Muluk",
-              "children": []
+              "children": [],
+              "parentSpouseId": "p34",
+              "parentSpouseName": "Pakize Muluk"
             },
             {
               "id": "p42",
@@ -223,12 +275,16 @@
                 {
                   "id": "p44",
                   "name": "Eklenecek",
-                  "children": []
+                  "children": [],
+                  "parentSpouseId": "p43",
+                  "parentSpouseName": "Eklenecek"
                 },
                 {
                   "id": "p45",
                   "name": "Eklenecek",
-                  "children": []
+                  "children": [],
+                  "parentSpouseId": "p43",
+                  "parentSpouseName": "Eklenecek"
                 }
               ],
               "spouses": [
@@ -236,7 +292,9 @@
                   "id": "p43",
                   "name": "Eklenecek"
                 }
-              ]
+              ],
+              "parentSpouseId": "p34",
+              "parentSpouseName": "Pakize Muluk"
             }
           ],
           "spouses": [
@@ -244,7 +302,9 @@
               "id": "p34",
               "name": "Pakize Muluk"
             }
-          ]
+          ],
+          "parentSpouseId": "p2",
+          "parentSpouseName": "Ayşe Muluk"
         },
         {
           "id": "p46",
@@ -257,7 +317,9 @@
                 {
                   "id": "p50",
                   "name": "Eklenecek",
-                  "children": []
+                  "children": [],
+                  "parentSpouseId": "p49",
+                  "parentSpouseName": "Eklenecek"
                 }
               ],
               "spouses": [
@@ -265,17 +327,23 @@
                   "id": "p49",
                   "name": "Eklenecek"
                 }
-              ]
+              ],
+              "parentSpouseId": "p47",
+              "parentSpouseName": "Eklenecek"
             },
             {
               "id": "p51",
               "name": "Filiz Muluk",
-              "children": []
+              "children": [],
+              "parentSpouseId": "p47",
+              "parentSpouseName": "Eklenecek"
             },
             {
               "id": "p52",
               "name": "Eklenecek",
-              "children": []
+              "children": [],
+              "parentSpouseId": "p47",
+              "parentSpouseName": "Eklenecek"
             }
           ],
           "spouses": [
@@ -283,7 +351,9 @@
               "id": "p47",
               "name": "Eklenecek"
             }
-          ]
+          ],
+          "parentSpouseId": "p2",
+          "parentSpouseName": "Ayşe Muluk"
         },
         {
           "id": "p53",
@@ -292,24 +362,15 @@
             {
               "id": "p6",
               "name": "Canan Taşkın",
-              "children": [
-                {
-                  "id": "p7",
-                  "name": "Gökay Taşkın",
-                  "children": []
-                },
-                {
-                  "id": "p8",
-                  "name": "Koray Taşkın",
-                  "children": []
-                }
-              ],
+              "children": [],
               "spouses": [
                 {
                   "id": "p5",
                   "name": "İlhan Taşkın"
                 }
-              ]
+              ],
+              "parentSpouseId": "p54",
+              "parentSpouseName": "Hanife Muluk"
             },
             {
               "id": "p55",
@@ -318,7 +379,9 @@
                 {
                   "id": "p57",
                   "name": "Cansu Muluk",
-                  "children": []
+                  "children": [],
+                  "parentSpouseId": "p56",
+                  "parentSpouseName": "Zeliha Muluk"
                 }
               ],
               "spouses": [
@@ -326,7 +389,9 @@
                   "id": "p56",
                   "name": "Zeliha Muluk"
                 }
-              ]
+              ],
+              "parentSpouseId": "p54",
+              "parentSpouseName": "Hanife Muluk"
             },
             {
               "id": "p58",
@@ -335,17 +400,23 @@
                 {
                   "id": "p60",
                   "name": "Seda Muluk",
-                  "children": []
+                  "children": [],
+                  "parentSpouseId": "p59",
+                  "parentSpouseName": "Ayşe Muluk"
                 },
                 {
                   "id": "p61",
                   "name": "Yusuf Muluk",
-                  "children": []
+                  "children": [],
+                  "parentSpouseId": "p59",
+                  "parentSpouseName": "Ayşe Muluk"
                 },
                 {
                   "id": "p62",
                   "name": "Mustafa Muluk",
-                  "children": []
+                  "children": [],
+                  "parentSpouseId": "p59",
+                  "parentSpouseName": "Ayşe Muluk"
                 }
               ],
               "spouses": [
@@ -353,7 +424,9 @@
                   "id": "p59",
                   "name": "Ayşe Muluk"
                 }
-              ]
+              ],
+              "parentSpouseId": "p54",
+              "parentSpouseName": "Hanife Muluk"
             },
             {
               "id": "p90",
@@ -366,7 +439,9 @@
                     {
                       "id": "p94",
                       "name": "Eklenecek",
-                      "children": []
+                      "children": [],
+                      "parentSpouseId": "p93",
+                      "parentSpouseName": "Eklenecek"
                     }
                   ],
                   "spouses": [
@@ -374,7 +449,9 @@
                       "id": "p93",
                       "name": "Eklenecek"
                     }
-                  ]
+                  ],
+                  "parentSpouseId": "p91",
+                  "parentSpouseName": "Bülent Vural"
                 },
                 {
                   "id": "p95",
@@ -385,7 +462,9 @@
                       "id": "p96",
                       "name": "Eklenecek"
                     }
-                  ]
+                  ],
+                  "parentSpouseId": "p91",
+                  "parentSpouseName": "Bülent Vural"
                 }
               ],
               "spouses": [
@@ -393,7 +472,9 @@
                   "id": "p91",
                   "name": "Bülent Vural"
                 }
-              ]
+              ],
+              "parentSpouseId": "p54",
+              "parentSpouseName": "Hanife Muluk"
             }
           ],
           "spouses": [
@@ -401,7 +482,9 @@
               "id": "p54",
               "name": "Hanife Muluk"
             }
-          ]
+          ],
+          "parentSpouseId": "p2",
+          "parentSpouseName": "Ayşe Muluk"
         },
         {
           "id": "p63",
@@ -414,20 +497,24 @@
                 {
                   "id": "p66",
                   "name": "Arda Batuhan Öktem",
-                  "children": []
+                  "children": [],
+                  "parentSpouseId": "p89"
                 },
                 {
                   "id": "p67",
                   "name": "Meriç Öktem",
-                  "children": []
+                  "children": [],
+                  "parentSpouseId": "p89"
                 }
               ],
               "spouses": [
                 {
                   "id": "p89",
-                  "name": "Eski Eşi"
+                  "name": ""
                 }
-              ]
+              ],
+              "parentSpouseId": "p64",
+              "parentSpouseName": "Selma Muluk"
             },
             {
               "id": "p68",
@@ -436,7 +523,9 @@
                 {
                   "id": "p70",
                   "name": "Eklenecek",
-                  "children": []
+                  "children": [],
+                  "parentSpouseId": "p69",
+                  "parentSpouseName": "Bilge Muluk"
                 }
               ],
               "spouses": [
@@ -444,7 +533,9 @@
                   "id": "p69",
                   "name": "Bilge Muluk"
                 }
-              ]
+              ],
+              "parentSpouseId": "p64",
+              "parentSpouseName": "Selma Muluk"
             },
             {
               "id": "p71",
@@ -453,12 +544,16 @@
                 {
                   "id": "p73",
                   "name": "Fatma Zehra Muluk",
-                  "children": []
+                  "children": [],
+                  "parentSpouseId": "p72",
+                  "parentSpouseName": "Bilge Muluk"
                 },
                 {
                   "id": "p74",
                   "name": "Bade Muluk",
-                  "children": []
+                  "children": [],
+                  "parentSpouseId": "p72",
+                  "parentSpouseName": "Bilge Muluk"
                 }
               ],
               "spouses": [
@@ -466,7 +561,9 @@
                   "id": "p72",
                   "name": "Bilge Muluk"
                 }
-              ]
+              ],
+              "parentSpouseId": "p64",
+              "parentSpouseName": "Selma Muluk"
             },
             {
               "id": "p75",
@@ -475,17 +572,23 @@
                 {
                   "id": "p77",
                   "name": "Ufuk Muluk",
-                  "children": []
+                  "children": [],
+                  "parentSpouseId": "p76",
+                  "parentSpouseName": "Demet Muluk"
                 },
                 {
                   "id": "p78",
                   "name": "Eklenecek",
-                  "children": []
+                  "children": [],
+                  "parentSpouseId": "p76",
+                  "parentSpouseName": "Demet Muluk"
                 },
                 {
                   "id": "p79",
                   "name": "Eklenecek",
-                  "children": []
+                  "children": [],
+                  "parentSpouseId": "p76",
+                  "parentSpouseName": "Demet Muluk"
                 }
               ],
               "spouses": [
@@ -493,7 +596,9 @@
                   "id": "p76",
                   "name": "Demet Muluk"
                 }
-              ]
+              ],
+              "parentSpouseId": "p64",
+              "parentSpouseName": "Selma Muluk"
             }
           ],
           "spouses": [
@@ -501,7 +606,9 @@
               "id": "p64",
               "name": "Selma Muluk"
             }
-          ]
+          ],
+          "parentSpouseId": "p2",
+          "parentSpouseName": "Ayşe Muluk"
         },
         {
           "id": "p80",
@@ -514,7 +621,9 @@
                 {
                   "id": "p84",
                   "name": "Ege Muluk",
-                  "children": []
+                  "children": [],
+                  "parentSpouseId": "p83",
+                  "parentSpouseName": "Zeynep Selvi Muluk"
                 }
               ],
               "spouses": [
@@ -522,7 +631,9 @@
                   "id": "p83",
                   "name": "Zeynep Selvi Muluk"
                 }
-              ]
+              ],
+              "parentSpouseId": "p81",
+              "parentSpouseName": "Fatma Zehra Muluk"
             },
             {
               "id": "p85",
@@ -531,12 +642,16 @@
                 {
                   "id": "p87",
                   "name": "Mutlu Muluk",
-                  "children": []
+                  "children": [],
+                  "parentSpouseId": "p86",
+                  "parentSpouseName": "Yasemin Ülgen Muluk"
                 },
                 {
                   "id": "p88",
                   "name": "Doğa Muluk",
-                  "children": []
+                  "children": [],
+                  "parentSpouseId": "p86",
+                  "parentSpouseName": "Yasemin Ülgen Muluk"
                 }
               ],
               "spouses": [
@@ -544,7 +659,9 @@
                   "id": "p86",
                   "name": "Yasemin Ülgen Muluk"
                 }
-              ]
+              ],
+              "parentSpouseId": "p81",
+              "parentSpouseName": "Fatma Zehra Muluk"
             }
           ],
           "spouses": [
@@ -552,13 +669,142 @@
               "id": "p81",
               "name": "Fatma Zehra Muluk"
             }
-          ]
+          ],
+          "parentSpouseId": "p2",
+          "parentSpouseName": "Ayşe Muluk"
+        },
+        {
+          "id": "p97",
+          "name": "İhsan Muluk",
+          "children": [
+            {
+              "id": "p99",
+              "name": "Aslı Duran",
+              "children": [
+                {
+                  "id": "p101",
+                  "name": "Eklenecek",
+                  "children": [],
+                  "parentSpouseId": "p100",
+                  "parentSpouseName": "Abdurrahman Duran"
+                },
+                {
+                  "id": "p102",
+                  "name": "Eklenecek",
+                  "children": [],
+                  "parentSpouseId": "p100",
+                  "parentSpouseName": "Abdurrahman Duran"
+                },
+                {
+                  "id": "p103",
+                  "name": "Eklenecek",
+                  "children": [],
+                  "parentSpouseId": "p100",
+                  "parentSpouseName": "Abdurrahman Duran"
+                }
+              ],
+              "spouses": [
+                {
+                  "id": "p100",
+                  "name": "Abdurrahman Duran"
+                }
+              ],
+              "parentSpouseId": "p98",
+              "parentSpouseName": "Ayşe Muluk"
+            },
+            {
+              "id": "p104",
+              "name": "Nazlı Muluk",
+              "children": [
+                {
+                  "id": "p106",
+                  "name": "Eklenecek",
+                  "children": [],
+                  "parentSpouseId": "p105"
+                },
+                {
+                  "id": "p107",
+                  "name": "Eklenecek",
+                  "children": [],
+                  "parentSpouseId": "p105"
+                }
+              ],
+              "spouses": [
+                {
+                  "id": "p105",
+                  "name": ""
+                }
+              ],
+              "parentSpouseId": "p98",
+              "parentSpouseName": "Ayşe Muluk"
+            },
+            {
+              "id": "p108",
+              "name": "Soydan Muluk",
+              "children": [
+                {
+                  "id": "p110",
+                  "name": "Eklenecek",
+                  "children": [],
+                  "parentSpouseId": "p109",
+                  "parentSpouseName": "Eklenecek"
+                }
+              ],
+              "spouses": [
+                {
+                  "id": "p109",
+                  "name": "Eklenecek"
+                }
+              ],
+              "parentSpouseId": "p98",
+              "parentSpouseName": "Ayşe Muluk"
+            }
+          ],
+          "spouses": [
+            {
+              "id": "p98",
+              "name": "Ayşe Muluk"
+            }
+          ],
+          "parentSpouseId": "p2",
+          "parentSpouseName": "Ayşe Muluk"
+        },
+        {
+          "id": "p301",
+          "name": "İbrahim Muluk",
+          "children": [
+            {
+              "id": "p303",
+              "name": "Erdoğan Muluk",
+              "children": [],
+              "spouses": [
+                {
+                  "id": "p304",
+                  "name": "p304"
+                }
+              ],
+              "parentSpouseId": "p302",
+              "parentSpouseName": "Eklenecek"
+            }
+          ],
+          "spouses": [
+            {
+              "id": "p302",
+              "name": "Eklenecek"
+            }
+          ],
+          "parentSpouseId": "p300",
+          "parentSpouseName": "Gücce Ana"
         }
       ],
       "spouses": [
         {
           "id": "p2",
           "name": "Ayşe Muluk"
+        },
+        {
+          "id": "p300",
+          "name": "Gücce Ana"
         }
       ]
     }

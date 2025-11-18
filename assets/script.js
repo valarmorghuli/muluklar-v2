@@ -1,9 +1,18 @@
-// === script.js — D3 Family Tree (search + focus + ONLY zoom-out fit) ===
 const $$ = (s, c = document) => c.querySelector(s);
 const WIDTH = () => $$("#tree").clientWidth;
 const HEIGHT = () => $$("#tree").clientHeight;
 
-// Header yüksekliğine göre ağaç alanını ayarla
+// a and b reference the id (or name fallback) from family.json
+const SPECIAL_LINKS = [
+  // a: Father, b: Mother
+  { a: "p5", b: "p6" },
+
+  // Child → link to the other parent
+  { a: "p7", b: "p6" },
+  { a: "p8", b: "p6" },
+];
+
+// Adjust the tree container height based on the header height
 function resizeTreeContainer() {
   const header = document.querySelector('header.topbar');
   const main = document.querySelector('main.onlytree');
@@ -12,7 +21,6 @@ function resizeTreeContainer() {
   const headerH = header.getBoundingClientRect().height;
   const vh = window.innerHeight;
 
-  // En az 380px olsun ki çok küçük kalmasın
   const h = Math.max(vh - headerH, 380);
 
   main.style.height = h + "px";
@@ -26,13 +34,13 @@ const NODE_H = 54;
 let tooltip, svg, g, root, treeLayout, zoom;
 
 /* ---------------- Tooltip ---------------- */
-function showTip(html, x, y) {
+function showTip(text, x, y) {
   if (!tooltip) {
     tooltip = document.createElement('div');
     tooltip.className = 'tooltip';
     document.body.appendChild(tooltip);
   }
-  tooltip.innerHTML = html;
+  tooltip.textContent = text;
   tooltip.style.left = (x + 12) + 'px';
   tooltip.style.top = (y + 12) + 'px';
   tooltip.style.display = 'block';
@@ -41,39 +49,160 @@ function hideTip() { if (tooltip) tooltip.style.display = 'none'; }
 
 /* ---------------- Helpers ---------------- */
 function expandPathTo(node) {
-  node.ancestors().forEach(a => { if (a._children) { a.children = a._children; a._children = null; } });
+  node.ancestors().forEach(a => {
+    if (a._children) {
+      a.children = a._children;
+      a._children = null;
+    }
+  });
 }
 function centerOnNode(node, k = 1.05, ms = 450) {
-  const w = WIDTH() || window.innerWidth, h = HEIGHT() || Math.round(window.innerHeight * 0.8);
+  const w = WIDTH() || window.innerWidth;
+  const h = HEIGHT() || Math.round(window.innerHeight * 0.8);
   const t = d3.zoomIdentity.translate(w / 2 - node.y * k, h / 2 - node.x * k).scale(k);
   svg.transition().duration(ms).call(zoom.transform, t);
 }
-// Tüm düğümleri (children + _children) dolaş
+
+// Walk over every node (children + _children)
 function traverseAll(node, fn) {
   fn(node);
   (node.children || []).forEach(c => traverseAll(c, fn));
   (node._children || []).forEach(c => traverseAll(c, fn));
 }
+
 function findById(id) {
   let found = null;
-  traverseAll(root, n => { if (!found && (n.data.id || n.data.name) === id) found = n; });
+  traverseAll(root, n => {
+    if (!found && (n.data.id || n.data.name) === id) found = n;
+  });
   return found;
 }
+
 function focusNodeById(id) {
   d3.selectAll("g.node rect").classed("focused", false);
-  d3.selectAll("g.node").filter(n => (n.data.id || n.data.name) === id)
-    .select("rect").classed("focused", true);
+  d3.selectAll("g.node")
+    .filter(n => (n.data.id || n.data.name) === id)
+    .select("rect")
+    .classed("focused", true);
 }
+
+function normalizeText(value) {
+  if (!value) return "";
+  return value
+    .toString()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
 function nodeMatchesQuery(d, q) {
   if (!q) return false;
-  const nm = (d.data.name || '').toLowerCase();
+  const nm = normalizeText(d.data.name || "");
   if (nm.includes(q)) return true;
-  const spouses = (d.data.spouses || []).map(s => (s.name || '').toLowerCase());
+  const spouses = (d.data.spouses || []).map(s => normalizeText(s.name || ""));
   return spouses.some(snm => snm.includes(q));
 }
 
+function normalizeFamilyTree(data) {
+  (function norm(node) {
+    if (!node || typeof node !== "object") return;
+    if (node.spouse) {
+      const extra = Array.isArray(node.spouse) ? node.spouse : [node.spouse];
+      const current = Array.isArray(node.spouses) ? node.spouses : [];
+      node.spouses = [...current, ...extra].filter(Boolean);
+      delete node.spouse;
+    }
+    (node.children || []).forEach(norm);
+  })(data);
+  return data;
+}
+
+/* -------- Split Mehmet Muluk into two marriage nodes -------- */
+// NOTE: We rely on names instead of IDs to keep it simple.
+// We assume family.json contains a record similar to:
+//   "name": "Mehmet Muluk",
+//   "spouses": [ { "name": "Ayşe Muluk" }, { "name": "Gücce Ana" } ]
+function splitMehmetForSpouses(data) {
+  const personName = "Mehmet Muluk";
+  const ayseIdentifiers = ["Ayşe Muluk", "p2"];
+  const gucceIdentifiers = ["Gücce Ana", "p300"];
+
+  const matchesSpouse = (spouse, targets) => {
+    if (!spouse || !Array.isArray(targets)) return false;
+    return targets.some(t => (spouse.name && spouse.name === t) || (spouse.id && spouse.id === t));
+  };
+
+  const childBelongsToSpouse = (child, spouse) => {
+    if (!child || !spouse) return false;
+    const tagId = child.parentSpouseId || (child.parentSpouse && child.parentSpouse.id);
+    const tagName = child.parentSpouseName || (child.parentSpouse && child.parentSpouse.name);
+    if (tagId && spouse.id && tagId === spouse.id) return true;
+    if (tagName && spouse.name && tagName === spouse.name) return true;
+    return false;
+  };
+
+  function dfs(node, parent) {
+    if (!node) return;
+
+    if (node.name === personName && Array.isArray(node.spouses) && node.spouses.length >= 2) {
+      const ayseSp = node.spouses.find(s => matchesSpouse(s, ayseIdentifiers));
+      const gucceSp = node.spouses.find(s => matchesSpouse(s, gucceIdentifiers));
+      if (!ayseSp && !gucceSp) return;
+
+      const children = Array.isArray(node.children) ? node.children : [];
+      const ayseChildren = [];
+      const gucceChildren = [];
+      const unknownChildren = [];
+
+      children.forEach(child => {
+        if (childBelongsToSpouse(child, ayseSp)) ayseChildren.push(child);
+        else if (childBelongsToSpouse(child, gucceSp)) gucceChildren.push(child);
+        else unknownChildren.push(child);
+      });
+
+      // Assign children without metadata to Ayşe by default
+      if (unknownChildren.length) {
+        const fallback = ayseSp ? ayseChildren : gucceSp ? gucceChildren : ayseChildren;
+        fallback.push(...unknownChildren);
+      }
+
+      const baseId = node.id || node.name;
+      const replacements = [];
+
+      if (ayseSp) {
+        replacements.push({
+          ...node,
+          id: baseId + "_ayse",
+          spouses: [ayseSp],
+          children: ayseChildren
+        });
+      }
+
+      if (gucceSp) {
+        replacements.push({
+          ...node,
+          id: baseId + "_gucce",
+          spouses: [gucceSp],
+          children: gucceChildren
+        });
+      }
+
+      if (parent && Array.isArray(parent.children)) {
+        parent.children = parent.children.flatMap(ch => (ch === node ? replacements : [ch]));
+      }
+
+      return;
+    }
+
+    (node.children || []).forEach(ch => dfs(ch, node));
+  }
+
+  dfs(data, null);
+  return data;
+}
+
 // --- Fit to view (considers node sizes; ONLY zoom-out, never enlarges) ---
-function fitToView(pad = 60, ms = 300, { onlyZoomOut = true } = {}) {
+function fitToView(pad = 60, ms = 300, { onlyZoomOut = true, padX = 60, padY = 60 } = {}) {
   const nodes = [];
   root.each(n => nodes.push(n));
   if (!nodes.length) return;
@@ -81,15 +210,21 @@ function fitToView(pad = 60, ms = 300, { onlyZoomOut = true } = {}) {
   const halfH = NODE_H / 2, halfW = NODE_W / 2;
   let minX = +Infinity, maxX = -Infinity, minY = +Infinity, maxY = -Infinity;
   nodes.forEach(n => {
-    if (n.x != null) { minX = Math.min(minX, n.x - halfH); maxX = Math.max(maxX, n.x + halfH); }
-    if (n.y != null) { minY = Math.min(minY, n.y - halfW); maxY = Math.max(maxY, n.y + halfW); }
+    if (n.x != null) {
+      minX = Math.min(minX, n.x - halfH);
+      maxX = Math.max(maxX, n.x + halfH);
+    }
+    if (n.y != null) {
+      minY = Math.min(minY, n.y - halfW);
+      maxY = Math.max(maxY, n.y + halfW);
+    }
   });
 
   const w = WIDTH() || window.innerWidth;
   const h = HEIGHT() || Math.round(window.innerHeight * 0.8);
 
-  const boxW = Math.max(1, (maxY - minY) + pad * 2);
-  const boxH = Math.max(1, (maxX - minX) + pad * 2);
+  const boxW = Math.max(1, (maxY - minY) + padX * 2);
+  const boxH = Math.max(1, (maxX - minX) + padY * 2);
 
   let kCandidate = Math.min(w / boxW, h / boxH);
   const currentK = d3.zoomTransform(svg.node()).k || 1;
@@ -100,7 +235,10 @@ function fitToView(pad = 60, ms = 300, { onlyZoomOut = true } = {}) {
   const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
 
   const tx = w / 2 - cy * k, ty = h / 2 - cx * k;
-  svg.transition().duration(ms).call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(k));
+  svg.transition().duration(ms).call(
+    zoom.transform,
+    d3.zoomIdentity.translate(tx, ty).scale(k)
+  );
 }
 
 /* ---------------- Search state ---------------- */
@@ -108,7 +246,7 @@ let searchHits = [];   // array of IDs
 let searchIndex = -1;
 
 function collectMatches(q) {
-  q = (q || '').trim().toLowerCase();
+  q = normalizeText((q || '').trim());
   const hits = [];
   if (!q) return hits;
   traverseAll(root, d => {
@@ -132,12 +270,13 @@ function focusAt(index) {
   expandPathTo(targetNode);
   update(targetNode);
 
+  // Wait for the D3 transition (300ms) plus a small buffer before moving the camera
   setTimeout(() => {
     const n2 = findById(targetId);
     if (!n2) return;
     focusNodeById(targetId);
     centerOnNode(n2, 1.05, 350);
-  }, 0);
+  }, 350);
 }
 
 /* ---------------- D3 init/update ---------------- */
@@ -147,31 +286,53 @@ function initTree(data) {
   svg = d3.select("#tree").append("svg").attr("width", w).attr("height", h);
   g = svg.append("g");
 
-  zoom = d3.zoom().scaleExtent([0.35, 2.5]).on("zoom", (ev) => { hideTip(); g.attr("transform", ev.transform); });
+  zoom = d3.zoom()
+    .scaleExtent([0.35, 2.5])
+    .on("zoom", (ev) => { hideTip(); g.attr("transform", ev.transform); });
   svg.call(zoom).on("click", hideTip);
 
   treeLayout = d3.tree().nodeSize([NODE_H * 1.4, NODE_W + 60]);
 
-  // spouse -> spouses normalize
-  (function norm(n) { if (n.spouse && !n.spouses) { n.spouses = [n.spouse]; delete n.spouse; } (n.children || []).forEach(norm); })(data);
-
-  root = d3.hierarchy(data); root.x0 = 0; root.y0 = 0;
+  root = d3.hierarchy(data);
+  root.x0 = 0;
+  root.y0 = 0;
   (root.children || []).forEach(collapseDeep);
   update(root);
   fitToView(60, 350, { onlyZoomOut: true, padX: 120, padY: 70 });
 }
 
-function collapseDeep(n) { if (n.children) { n._children = n.children; n._children.forEach(collapseDeep); n.children = null; } }
-function expandAll(n) { if (n._children) { n.children = n._children; n._children = null; } (n.children || []).forEach(expandAll); }
-function collapseAll(n) { (n.children || []).forEach(collapseAll); if (n.children) { n._children = n.children; n.children = null; } }
+function collapseDeep(n) {
+  if (n.children) {
+    n._children = n.children;
+    n._children.forEach(collapseDeep);
+    n.children = null;
+  }
+}
+function expandAll(n) {
+  if (n._children) {
+    n.children = n._children;
+    n._children = null;
+  }
+  (n.children || []).forEach(expandAll);
+}
+function collapseAll(n) {
+  (n.children || []).forEach(collapseAll);
+  if (n.children) {
+    n._children = n.children;
+    n.children = null;
+  }
+}
 
-function elbow(s, t) { const mx = (s.y + t.y) / 2; return `M${s.y},${s.x}C${mx},${s.x} ${mx},${t.x} ${t.y},${t.x}`; }
+function elbow(s, t) {
+  const mx = (s.y + t.y) / 2;
+  return `M${s.y},${s.x}C${mx},${s.x} ${mx},${t.x} ${t.y},${t.x}`;
+}
 
 function update(source) {
   const dur = 300;
   const treed = treeLayout(root);
 
-  // ---- LINKLER ----
+  // ---- LINKS ----
   const links = g.selectAll("path.link")
     .data(treed.links(), d => d.target.data.id || d.target.data.name);
 
@@ -188,7 +349,54 @@ function update(source) {
     .attr("d", d => elbow(source, source))
     .remove();
 
-  // ---- NODLAR ----
+  // ========= NEW FROM HERE: cross-link paths =========
+  // 1) build id → node map
+  const nodeIndex = {};
+  treed.each(d => {
+    const key = d.data.id || d.data.name;
+    nodeIndex[key] = d;
+  });
+
+  // 2) keep links that have both end points rendered
+  const activeCrossLinks = SPECIAL_LINKS.filter(cl =>
+    nodeIndex[cl.a] && nodeIndex[cl.b]
+  );
+
+  // 3) draw path.crosslink
+  const cross = g.selectAll("path.crosslink")
+    .data(activeCrossLinks, d => d.a + "→" + d.b);
+
+  cross.enter()
+    .append("path")
+    .attr("class", "crosslink")
+    .attr("d", d => {
+      const a = nodeIndex[d.a];
+      const b = nodeIndex[d.b];
+      if (!a || !b) return null;
+      // quick straight line for the initial draw
+      return `M${a.y},${a.x}L${b.y},${b.x}`;
+    })
+
+    .merge(cross)
+    .transition().duration(dur)
+    .attr("d", d => {
+      const a = nodeIndex[d.a];
+      const b = nodeIndex[d.b];
+      if (!a || !b) return null;
+
+      // offset so the line leaves from the card edges
+      const ax = a.x;
+      const ay = a.y + NODE_W / 2;
+      const bx = b.x;
+      const by = b.y + NODE_W / 2;
+
+      return `M${ay},${ax}L${by},${bx}`;
+    });
+
+  cross.exit().remove();
+  // ========= end of cross-link drawing =========
+
+  // ---- NODES ----
   const nodes = g.selectAll("g.node")
     .data(treed.descendants(), d => d.data.id || d.data.name);
 
@@ -198,11 +406,11 @@ function update(source) {
     .attr("transform", d => `translate(${source.y0 || 0},${source.x0 || 0})`)
     .on("click", (ev, d) => { hideTip(); toggle(d); })
     .on("mouseenter", (ev, d) => {
-      showTip(`<strong>${d.data.name}</strong>`, ev.pageX, ev.pageY);
+      showTip(d.data.name, ev.pageX, ev.pageY);
     })
     .on("mouseleave", hideTip);
 
-  // Kutunun kendisi (sabit yükseklik)
+  // The card rectangle (fixed size)
   en.append("rect")
     .attr("x", -NODE_W / 2)
     .attr("y", -NODE_H / 2)
@@ -210,31 +418,31 @@ function update(source) {
     .attr("height", NODE_H)
     .attr("rx", 10);
 
-  // İsim satırı – ilk yerleşim
+  // Name line – initial placement
   en.append("text")
     .attr("class", "title")
     .attr("x", -NODE_W / 2 + 12)
-    .attr("y", -6) // kabaca üst satır
+    .attr("y", -6) // roughly the top row
     .text(d => d.data.name);
 
-  // Eş(ler) satırı – ilk yerleşim
+  // Spouse line – initial placement
   en.append("text")
     .attr("class", "spouse-text")
     .attr("x", -NODE_W / 2 + 12)
-    .attr("y", 14) // ikinci satır
+    .attr("y", 14) // second row
     .text(d => {
       const sps = d.data.spouses;
       if (!sps || !sps.length) return "";
       return sps.map(s => s.name).join(", ");
     });
 
-  // ---- METNİ BLOK OLARAK DİKEY ORTALA ----
+  // ---- VERTICALLY CENTER THE TEXT BLOCK ----
   en.each(function () {
     const gnode = d3.select(this);
     const texts = gnode.selectAll("text");
     if (texts.empty()) return;
 
-    // Metin bloğunun ortak bbox'ı
+    // Shared bounding box of all text lines
     let minY = Infinity, maxY = -Infinity;
     texts.each(function () {
       const b = this.getBBox();
@@ -242,17 +450,17 @@ function update(source) {
       if (b.y + b.height > maxY) maxY = b.y + b.height;
     });
 
-    const center = (minY + maxY) / 2; // metin bloğunun merkezi
-    const delta = -center;            // merkezi 0'a taşımak için kaydırma
+    const center = (minY + maxY) / 2; // center of the text block
+    const delta = -center;            // shift needed to move center to 0
 
-    // Tüm text satırlarının y değerine aynı delta'yı ekle
+    // Apply the same delta to every text line
     texts.attr("y", function () {
       const oldY = parseFloat(d3.select(this).attr("y")) || 0;
       return oldY + delta;
     });
   });
 
-  // ---- TRANSİSYON ----
+  // ---- TRANSITION ----
   en.merge(nodes)
     .transition().duration(dur)
     .attr("transform", d => `translate(${d.y},${d.x})`);
@@ -266,8 +474,13 @@ function update(source) {
 }
 
 function toggle(d) {
-  if (d.children) { d._children = d.children; d.children = null; }
-  else { d.children = d._children; d._children = null; }
+  if (d.children) {
+    d._children = d.children;
+    d.children = null;
+  } else {
+    d.children = d._children;
+    d._children = null;
+  }
   update(d);
 }
 
@@ -280,18 +493,19 @@ function attachUI() {
     pB = $$("#prevHit"),
     nB = $$("#nextHit");
 
-  const h = document.getElementById('homeBtn');     // Merkezle
-  const zi = document.getElementById('zoomInFab');   // sağdaki +
-  const zo = document.getElementById('zoomOutFab');  // sağdaki −
+  const h = document.getElementById('homeBtn');     // Center view
+  const zi = document.getElementById('zoomInFab');   // right-side +
+  const zo = document.getElementById('zoomOutFab');  // right-side −
 
-  // --- Yazarken canlı highlight ---
+  // --- Live highlight while typing ---
   s.addEventListener("input", () => {
-    const q = s.value.trim().toLowerCase();
-    searchHits = collectMatches(q);
+    const rawQuery = s.value.trim();
+    const normalizedQuery = normalizeText(rawQuery);
+    searchHits = collectMatches(rawQuery);
     searchIndex = -1;
 
-    if (!q) {
-      // Arama boşsa: sadece vurguyu temizle, ağaca / zoom'a dokunma
+    if (!normalizedQuery) {
+      // Search empty: only clear highlights, leave tree/zoom state
       searchHits = [];
       searchIndex = -1;
 
@@ -304,7 +518,7 @@ function attachUI() {
       return;
     }
 
-    // İlk eşleşmenin yolunu aç
+    // Expand the path to the first match
     if (searchHits.length) {
       const first = findById(searchHits[0]);
       if (first) {
@@ -313,10 +527,10 @@ function attachUI() {
       }
     }
 
-    // Ekrandaki node’lar üzerinde highlight uygula
+    // Apply highlight to the nodes on screen
     requestAnimationFrame(() => {
       d3.selectAll("g.node").each(function (nd) {
-        const isHit = nodeMatchesQuery(nd, q);
+        const isHit = nodeMatchesQuery(nd, normalizedQuery);
         d3.select(this).select("rect")
           .classed("matched", isHit)
           .style("stroke-width", isHit ? 2.6 : 1.25)
@@ -325,26 +539,26 @@ function attachUI() {
     });
   });
 
-  // --- Enter ile odaklanma ---
+  // --- Focus via Enter ---
   s.addEventListener("keydown", (ev) => {
     if (ev.key !== "Enter") return;
     if (!searchHits.length) return;
 
     ev.preventDefault();
 
-    // Mobil: klavyeyi kapat, ilk eşleşmeye odaklan
+    // Mobile: close keyboard and focus the first match
     if (window.innerWidth <= 768) {
-      s.blur();          // sanal klavye kapanır
-      focusAt(0);        // ilk hit'e git
-      return;            // diğerlerine ⬆︎ / ⬇︎ ile gideceksin
+      s.blur();          // dismiss the virtual keyboard
+      focusAt(0);        // go to the first hit
+      return;            // use ▲ / ▼ for others
     }
 
-    // Desktop: Enter → sonraki, Shift+Enter → önceki
+    // Desktop: Enter → next, Shift+Enter → previous
     if (ev.shiftKey) focusAt(searchIndex - 1);
     else focusAt(searchIndex + 1);
   });
 
-  // --- Sıfırla: sadece arama durumunu temizle ---
+  // --- Reset: clear only the search state ---
   r.addEventListener("click", () => {
     s.value = '';
     searchHits = [];
@@ -357,45 +571,45 @@ function attachUI() {
       .style('stroke', 'var(--nodeStroke)');
   });
 
-  // --- Tümünü Aç ---
+  // --- Expand All ---
   e.addEventListener("click", () => {
     expandAll(root);
     update(root);
-    // tüm ağacı ekrana sığdır
+    // fit the full tree into view
     fitToView(60, 300, { onlyZoomOut: false, padX: 120, padY: 70 });
   });
 
-  // --- Tümünü Kapat ---
+  // --- Collapse All ---
   c.addEventListener("click", () => {
     (root.children || []).forEach(collapseAll);
     update(root);
     fitToView(60, 300, { onlyZoomOut: false, padX: 120, padY: 70 });
   });
 
-  // --- Yakınlaştır (+) – sağdaki daire ---
+  // --- Zoom In (+) – floating button ---
   if (zi) {
     zi.addEventListener('click', () => {
       if (!svg) return;
-      svg.transition().duration(200).call(zoom.scaleBy, 1.2); // %20 zoom-in
+      svg.transition().duration(200).call(zoom.scaleBy, 1.2); // ~20% zoom-in
     });
   }
 
-  // --- Uzaklaştır (−) – sağdaki daire ---
+  // --- Zoom Out (−) – floating button ---
   if (zo) {
     zo.addEventListener('click', () => {
       if (!svg) return;
-      svg.transition().duration(200).call(zoom.scaleBy, 0.8); // %20 zoom-out
+      svg.transition().duration(200).call(zoom.scaleBy, 0.8); // ~20% zoom-out
     });
   }
 
-  // --- Merkezle ---
+  // --- Center ---
   if (h) {
     h.addEventListener('click', () => {
       fitToView(60, 300, { onlyZoomOut: false, padX: 120, padY: 70 });
     });
   }
 
-  // --- Önceki / Sonraki eşleşme butonları ---
+  // --- Previous / Next match buttons ---
   if (nB) {
     nB.addEventListener("click", () => {
       if (!searchHits.length) return;
@@ -414,18 +628,36 @@ function attachUI() {
 
 /* ---------------- Boot ---------------- */
 async function main() {
-  // önce container yüksekliğini ayarla
+  // adjust the container height first
   resizeTreeContainer();
 
-  const data = await fetch('assets/family.json').then(r => r.json());
-  initTree(data);
-  attachUI();
+  try {
+    let data = await fetch('assets/family.json').then(r => {
+      if (!r.ok) throw new Error(`HTTP ${r.status}: ${r.statusText}`);
+      return r.json();
+    });
+
+    data = normalizeFamilyTree(data);
+    // Split Mehmet Muluk's multiple marriages into separate nodes
+    data = splitMehmetForSpouses(data);
+
+    initTree(data);
+    attachUI();
+  } catch (err) {
+    console.error('Failed to load family tree:', err);
+    document.querySelector('main.onlytree').innerHTML =
+      '<div style="padding: 40px; text-align: center; color: #e7eaf3;">' +
+      'Aile ağacı yüklenemedi. Lütfen sayfayı yenileyin.' +
+      '</div>';
+  }
 }
 main();
 
-// resize: SVG boyutlarını güncelle
-window.addEventListener("resize", () => {
+// resize: refresh SVG dimensions
+function updateSVGDimensions() {
+  if (!svg) return;
   const w = WIDTH() || window.innerWidth;
   const h = HEIGHT() || Math.round(window.innerHeight * 0.8);
-  d3.select("#tree svg").attr("width", w).attr("height", h);
-});
+  svg.attr("width", w).attr("height", h);
+}
+window.addEventListener("resize", updateSVGDimensions);

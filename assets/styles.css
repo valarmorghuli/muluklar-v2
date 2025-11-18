@@ -27,7 +27,7 @@ body {
   font: 14px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Arial;
 }
 
-/* ===== Üst bar ===== */
+/* ===== Top bar ===== */
 header.topbar {
   position: sticky;
   top: 0;
@@ -64,14 +64,29 @@ header.topbar {
   cursor: pointer;
 }
 
+/* #prevHit,
+#nextHit {
+  font-size: 18px;
+  line-height: 1;
+  padding-inline: 10px;
+} */
+
+/* #prevHit,
+#nextHit {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 6px 10px;
+} */
+
 .controls button:hover {
   border-color: var(--accent);
 }
 
-/* ===== Ağaç alanı (yüksekliği JS ayarlayacak) ===== */
+/* ===== Tree area (height set in JS) ===== */
 main.onlytree {
   position: relative;
-  /* yükseklik JS tarafında set edilecek */
+  /* height will be set on the JS side */
 }
 
 #tree {
@@ -81,7 +96,7 @@ main.onlytree {
   overflow: hidden;
 }
 
-/* ===== Node / link stilleri ===== */
+/* ===== Node / link styles ===== */
 
 .node rect {
   fill: var(--node);
@@ -137,7 +152,15 @@ main.onlytree {
   stroke-width: 2.6px !important;
 }
 
-/* ===== Sağ alttaki zoom butonları ===== */
+.node rect.focused {
+  stroke: #ffd166 !important;
+  stroke-width: 3px !important;
+  filter:
+    drop-shadow(0 1px 0 rgba(0, 0, 0, 0.35))
+    drop-shadow(0 0 8px rgba(255, 209, 102, 0.6));
+}
+
+/* ===== Floating zoom buttons ===== */
 .zoom-fab {
   position: fixed;
   right: 20px;
@@ -169,7 +192,16 @@ main.onlytree {
   border-color: #3a4f69;
 }
 
-/* ===== Mobil iyileştirmeler (yükseklik JS’te, burada sadece layout) ===== */
+path.crosslink {
+  stroke: rgba(255, 255, 255, 0.25);
+  stroke-width: 1.4px;
+  stroke-dasharray: 4 4;
+  fill: none;
+  pointer-events: none;
+  /* keep links clickable underneath */
+}
+
+/* ===== Mobile tweaks (height handled in JS, layout here) ===== */
 @media (max-width: 768px) {
   header.topbar {
     flex-direction: column;
