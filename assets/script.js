@@ -30,6 +30,35 @@ window.addEventListener("orientationchange", resizeTreeContainer);
 
 const NODE_W = 180;
 const NODE_H = 54;
+const SINGLE_ROW_H = NODE_H / 2; // collapse cards that only need one row
+const ZOOM_EPSILON = 0.02;
+
+function resetBrowserZoomToDefault() {
+  const viewport = window.visualViewport;
+  const html = document.documentElement;
+  if (!viewport || !html) return;
+
+  const scale = viewport.scale || 1;
+  if (Math.abs(scale - 1) < ZOOM_EPSILON) {
+    html.style.removeProperty("zoom");
+    return;
+  }
+
+  const compensation = Number((1 / scale).toFixed(4));
+  html.style.zoom = compensation;
+
+  const handleViewportReset = () => {
+    if (!window.visualViewport) return;
+    const currentScale = window.visualViewport.scale || 1;
+    if (Math.abs(currentScale - 1) < ZOOM_EPSILON) {
+      html.style.removeProperty("zoom");
+      window.visualViewport.removeEventListener("resize", handleViewportReset);
+    }
+  };
+  window.visualViewport.addEventListener("resize", handleViewportReset);
+}
+
+resetBrowserZoomToDefault();
 
 let tooltip, svg, g, root, treeLayout, zoom;
 
@@ -410,7 +439,7 @@ function update(source) {
     })
     .on("mouseleave", hideTip);
 
-  // The card rectangle (fixed size)
+  // Base card rectangle (height adjusted later)
   en.append("rect")
     .attr("x", -NODE_W / 2)
     .attr("y", -NODE_H / 2)
@@ -437,14 +466,17 @@ function update(source) {
     });
 
   // ---- VERTICALLY CENTER THE TEXT BLOCK ----
-  en.each(function () {
+  en.each(function (d) {
     const gnode = d3.select(this);
     const texts = gnode.selectAll("text");
     if (texts.empty()) return;
 
     // Shared bounding box of all text lines
     let minY = Infinity, maxY = -Infinity;
+    let textLines = 0;
     texts.each(function () {
+      const content = (this.textContent || "").trim();
+      if (content) textLines += 1;
       const b = this.getBBox();
       if (b.y < minY) minY = b.y;
       if (b.y + b.height > maxY) maxY = b.y + b.height;
@@ -458,6 +490,12 @@ function update(source) {
       const oldY = parseFloat(d3.select(this).attr("y")) || 0;
       return oldY + delta;
     });
+
+    if (!textLines) return;
+    const cardHeight = textLines === 1 ? SINGLE_ROW_H : NODE_H;
+    gnode.select("rect")
+      .attr("height", cardHeight)
+      .attr("y", -cardHeight / 2);
   });
 
   // ---- TRANSITION ----
@@ -644,7 +682,7 @@ async function main() {
     initTree(data);
     attachUI();
   } catch (err) {
-    console.error('Failed to load family tree:', err);
+    console.error('Bir Hata Oldu:', err);
     document.querySelector('main.onlytree').innerHTML =
       '<div style="padding: 40px; text-align: center; color: #e7eaf3;">' +
       'Aile ağacı yüklenemedi. Lütfen sayfayı yenileyin.' +
