@@ -273,6 +273,14 @@ function fitToView(pad = 60, ms = 300, { onlyZoomOut = true, padX = 60, padY = 6
 /* ---------------- Search state ---------------- */
 let searchHits = [];   // array of IDs
 let searchIndex = -1;
+let pendingFocusTimer = null;
+
+function cancelPendingFocus() {
+  if (pendingFocusTimer) {
+    clearTimeout(pendingFocusTimer);
+    pendingFocusTimer = null;
+  }
+}
 
 function collectMatches(q) {
   q = normalizeText((q || '').trim());
@@ -300,7 +308,9 @@ function focusAt(index) {
   update(targetNode);
 
   // Wait for the D3 transition (300ms) plus a small buffer before moving the camera
-  setTimeout(() => {
+  cancelPendingFocus();
+  pendingFocusTimer = setTimeout(() => {
+    pendingFocusTimer = null;
     const n2 = findById(targetId);
     if (!n2) return;
     focusNodeById(targetId);
@@ -546,6 +556,7 @@ function attachUI() {
       // Search empty: only clear highlights, leave tree/zoom state
       searchHits = [];
       searchIndex = -1;
+      cancelPendingFocus();
 
       d3.selectAll("g.node rect")
         .classed("focused", false)
@@ -556,13 +567,11 @@ function attachUI() {
       return;
     }
 
-    // Expand the path to the first match
     if (searchHits.length) {
-      const first = findById(searchHits[0]);
-      if (first) {
-        expandPathTo(first);
-        update(first);
-      }
+      focusAt(0); // highlight + center on the top search result automatically
+    } else {
+      d3.selectAll("g.node rect").classed("focused", false);
+      cancelPendingFocus();
     }
 
     // Apply highlight to the nodes on screen
@@ -601,6 +610,7 @@ function attachUI() {
     s.value = '';
     searchHits = [];
     searchIndex = -1;
+    cancelPendingFocus();
 
     d3.selectAll('g.node rect')
       .classed('focused', false)
