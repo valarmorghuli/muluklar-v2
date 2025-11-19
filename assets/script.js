@@ -60,7 +60,7 @@ function resetBrowserZoomToDefault() {
 
 resetBrowserZoomToDefault();
 
-let tooltip, svg, g, root, treeLayout, zoom;
+let tooltip, svg, g, linkLayer, crossLayer, nodeLayer, root, treeLayout, zoom;
 
 /* ---------------- Tooltip ---------------- */
 function showTip(text, x, y) {
@@ -324,6 +324,9 @@ function initTree(data) {
   const h = HEIGHT() || Math.round(window.innerHeight * 0.8);
   svg = d3.select("#tree").append("svg").attr("width", w).attr("height", h);
   g = svg.append("g");
+  linkLayer = g.append("g").attr("class", "links");
+  crossLayer = g.append("g").attr("class", "crosslinks");
+  nodeLayer = g.append("g").attr("class", "nodes");
 
   zoom = d3.zoom()
     .scaleExtent([0.35, 2.5])
@@ -372,7 +375,7 @@ function update(source) {
   const treed = treeLayout(root);
 
   // ---- LINKS ----
-  const links = g.selectAll("path.link")
+  const links = linkLayer.selectAll("path.link")
     .data(treed.links(), d => d.target.data.id || d.target.data.name);
 
   links.enter()
@@ -402,7 +405,7 @@ function update(source) {
   );
 
   // 3) draw path.crosslink
-  const cross = g.selectAll("path.crosslink")
+  const cross = crossLayer.selectAll("path.crosslink")
     .data(activeCrossLinks, d => d.a + "→" + d.b);
 
   cross.enter()
@@ -436,7 +439,7 @@ function update(source) {
   // ========= end of cross-link drawing =========
 
   // ---- NODES ----
-  const nodes = g.selectAll("g.node")
+  const nodes = nodeLayer.selectAll("g.node")
     .data(treed.descendants(), d => d.data.id || d.data.name);
 
   const en = nodes.enter()
