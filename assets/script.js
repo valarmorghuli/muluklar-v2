@@ -146,21 +146,8 @@ function normalizeFamilyTree(data) {
   return data;
 }
 
-/* -------- Split Mehmet Muluk into two marriage nodes -------- */
-// NOTE: We rely on names instead of IDs to keep it simple.
-// We assume family.json contains a record similar to:
-//   "name": "Mehmet Muluk",
-//   "spouses": [ { "name": "Ayşe Muluk" }, { "name": "Gücce Ana" } ]
-function splitMehmetForSpouses(data) {
-  const personName = "Mehmet Muluk";
-  const ayseIdentifiers = ["Ayşe Muluk", "p2"];
-  const gucceIdentifiers = ["Gücce Ana", "p300"];
-
-  const matchesSpouse = (spouse, targets) => {
-    if (!spouse || !Array.isArray(targets)) return false;
-    return targets.some(t => (spouse.name && spouse.name === t) || (spouse.id && spouse.id === t));
-  };
-
+/* -------- Split any multi-marriage node into separate entries -------- */
+function splitMultiMarriages(data) {
   const childBelongsToSpouse = (child, spouse) => {
     if (!child || !spouse) return false;
     const tagId = child.parentSpouseId || (child.parentSpouse && child.parentSpouse.id);
@@ -173,57 +160,52 @@ function splitMehmetForSpouses(data) {
   function dfs(node, parent) {
     if (!node) return;
 
-    if (node.name === personName && Array.isArray(node.spouses) && node.spouses.length >= 2) {
-      const ayseSp = node.spouses.find(s => matchesSpouse(s, ayseIdentifiers));
-      const gucceSp = node.spouses.find(s => matchesSpouse(s, gucceIdentifiers));
-      if (!ayseSp && !gucceSp) return;
+    // First, handle children downwards
+    (node.children || []).forEach(ch => dfs(ch, node));
 
-      const children = Array.isArray(node.children) ? node.children : [];
-      const ayseChildren = [];
-      const gucceChildren = [];
-      const unknownChildren = [];
+    if (!Array.isArray(node.spouses) || node.spouses.length < 2) return;
 
-      children.forEach(child => {
-        if (childBelongsToSpouse(child, ayseSp)) ayseChildren.push(child);
-        else if (childBelongsToSpouse(child, gucceSp)) gucceChildren.push(child);
-        else unknownChildren.push(child);
+    const children = Array.isArray(node.children) ? node.children : [];
+    const spouseBuckets = new Map();
+    node.spouses.forEach((sp, idx) => {
+      const key = sp.id || sp.name || `sp${idx}`;
+      spouseBuckets.set(key, []);
+    });
+    const firstKey = spouseBuckets.keys().next().value;
+
+    const unknownChildren = [];
+    children.forEach(child => {
+      let placed = false;
+      node.spouses.forEach((sp, idx) => {
+        if (placed) return;
+        const key = sp.id || sp.name || `sp${idx}`;
+        if (childBelongsToSpouse(child, sp)) {
+          spouseBuckets.get(key).push(child);
+          placed = true;
+        }
       });
+      if (!placed) unknownChildren.push(child);
+    });
 
-      // Assign children without metadata to Ayşe by default
-      if (unknownChildren.length) {
-        const fallback = ayseSp ? ayseChildren : gucceSp ? gucceChildren : ayseChildren;
-        fallback.push(...unknownChildren);
-      }
-
-      const baseId = node.id || node.name;
-      const replacements = [];
-
-      if (ayseSp) {
-        replacements.push({
-          ...node,
-          id: baseId + "_ayse",
-          spouses: [ayseSp],
-          children: ayseChildren
-        });
-      }
-
-      if (gucceSp) {
-        replacements.push({
-          ...node,
-          id: baseId + "_gucce",
-          spouses: [gucceSp],
-          children: gucceChildren
-        });
-      }
-
-      if (parent && Array.isArray(parent.children)) {
-        parent.children = parent.children.flatMap(ch => (ch === node ? replacements : [ch]));
-      }
-
-      return;
+    if (unknownChildren.length && firstKey) {
+      spouseBuckets.get(firstKey).push(...unknownChildren);
     }
 
-    (node.children || []).forEach(ch => dfs(ch, node));
+    const baseId = node.id || node.name || 'node';
+    const replacements = node.spouses.map((sp, idx) => {
+      const key = sp.id || sp.name || `sp${idx}`;
+      const kids = spouseBuckets.get(key) || [];
+      return {
+        ...node,
+        id: `${baseId}_${key}`,
+        spouses: [sp],
+        children: kids
+      };
+    });
+
+    if (parent && Array.isArray(parent.children)) {
+      parent.children = parent.children.flatMap(ch => (ch === node ? replacements : [ch]));
+    }
   }
 
   dfs(data, null);
@@ -524,7 +506,62 @@ function update(source) {
   treed.each(d => { d.x0 = d.x; d.y0 = d.y; });
 }
 
+function hasAnyChildrenNode(n) {
+  return Boolean((n.children && n.children.length) || (n._children && n._children.length));
+}
+
+// If a person has no visible children but their spouse does (in another branch),
+// jump to that spouse, open their children, and center on them.
+function findSpouseWithChildren(node) {
+  if (!node || !root) return null;
+  const spouses = Array.isArray(node.data.spouses) ? node.data.spouses : [];
+  if (!spouses.length) return null;
+
+  const spouseIds = spouses.map(s => s.id).filter(Boolean);
+  const spouseNames = spouses.map(s => s.name).filter(Boolean);
+
+  let found = null;
+  traverseAll(root, n => {
+    if (found) return;
+    if (n === node) return;
+    const nid = n.data.id || n.data.name;
+    const nname = n.data.name;
+    const idMatch = spouseIds.length && spouseIds.includes(nid);
+    const nameMatch = spouseNames.length && spouseNames.includes(nname);
+    if (idMatch || nameMatch) {
+      if (hasAnyChildrenNode(n)) found = n;
+    }
+  });
+  return found;
+}
+
+function revealSpouseBranch(node) {
+  const spouseNode = findSpouseWithChildren(node);
+  if (!spouseNode) return false;
+
+  const showing = Array.isArray(spouseNode.children) && spouseNode.children.length > 0;
+  if (showing) {
+    spouseNode._children = spouseNode.children;
+    spouseNode.children = null;
+    update(spouseNode);
+    return true;
+  }
+
+  expandPathTo(spouseNode);
+  if (spouseNode._children) {
+    spouseNode.children = spouseNode._children;
+    spouseNode._children = null;
+  }
+
+  update(spouseNode);
+  return true;
+}
+
 function toggle(d) {
+  if (!hasAnyChildrenNode(d)) {
+    if (revealSpouseBranch(d)) return;
+  }
+
   if (d.children) {
     d._children = d.children;
     d.children = null;
@@ -689,8 +726,8 @@ async function main() {
     });
 
     data = normalizeFamilyTree(data);
-    // Split Mehmet Muluk's multiple marriages into separate nodes
-    data = splitMehmetForSpouses(data);
+    // Split multiple marriages (e.g., Mehmet→Ayşe/Gücce, Erdoğan→p304/p307)
+    data = splitMultiMarriages(data);
 
     initTree(data);
     attachUI();
