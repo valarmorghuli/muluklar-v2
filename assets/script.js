@@ -61,6 +61,7 @@ function resetBrowserZoomToDefault() {
 resetBrowserZoomToDefault();
 
 let tooltip, svg, g, linkLayer, crossLayer, nodeLayer, root, treeLayout, zoom;
+let autoFitTimer = null;
 
 /* ---------------- Tooltip ---------------- */
 function showTip(text, x, y) {
@@ -250,6 +251,15 @@ function fitToView(pad = 60, ms = 300, { onlyZoomOut = true, padX = 60, padY = 6
     zoom.transform,
     d3.zoomIdentity.translate(tx, ty).scale(k)
   );
+}
+
+// Keep the full tree visible and centered shortly after an update.
+function scheduleAutoFit(ms = 320) {
+  if (autoFitTimer) clearTimeout(autoFitTimer);
+  autoFitTimer = setTimeout(() => {
+    autoFitTimer = null;
+    fitToView(60, 320, { onlyZoomOut: false, padX: 120, padY: 80 });
+  }, ms);
 }
 
 /* ---------------- Search state ---------------- */
@@ -559,7 +569,10 @@ function revealSpouseBranch(node) {
 
 function toggle(d) {
   if (!hasAnyChildrenNode(d)) {
-    if (revealSpouseBranch(d)) return;
+    if (revealSpouseBranch(d)) {
+      scheduleAutoFit();
+      return;
+    }
   }
 
   if (d.children) {
@@ -570,6 +583,7 @@ function toggle(d) {
     d._children = null;
   }
   update(d);
+  scheduleAutoFit();
 }
 
 /* ---------------- UI wiring ---------------- */
